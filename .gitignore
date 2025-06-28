@@ -1,0 +1,11 @@
+# Build folders
+build/
+
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.obj
+
+# Mac/Linux extras
+.DS_Store
