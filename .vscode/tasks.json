@@ -9,6 +9,8 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "main.cpp",
+                "src/parser.cpp",
+                "-Iinclude", 
                 "-o", 
                 "build/main.exe",
             ],
@@ -22,7 +24,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Compile main.cpp and helper.cpp with include path"
+            "detail": "Compile main.cpp"
         }
     ]
 }
