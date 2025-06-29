@@ -7,10 +7,17 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-    std::string filePath = "test.txt";
-    Parser p = Parser(filePath);
-    cout << argc << "\n";
-    while (p.hasMoreLines()) {
-        std::cout << p.advance() << "\n";
+    try {
+        std::string filePath = "test.txt";
+        if (argc >= 2) {
+            filePath = argv[1];
+        }
+        Parser p = Parser(filePath);
+        while (p.hasMoreLines()) {
+            std::cout << p.advance() << "\n";
+        }
+    }
+    catch (const std::runtime_error& e) {
+        std::cerr << "Runtime error: " << e.what() << "\n";
     }
 }
