@@ -26,3 +26,32 @@ target_include_directories(
     PRIVATE 
     include
 )
+
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.4.0 
+)
+FetchContent_MakeAvailable(Catch2)
+
+# Define your test executable target
+add_executable(
+    compiler_tests
+    test/parser_test.cpp         # <--- NEW TEST FILE (Where you'll write tests)
+    ${APP_SOURCES}               # <--- Link ALL application logic into the test executable
+)
+
+# Include directories for tests
+target_include_directories(
+    compiler_tests 
+    PRIVATE 
+    include                     # To find CommandParser.hpp
+    lib                         # To find fakeit.hpp (if you use it later)
+)
+
+# Link tests to the Catch2 library, which provides the main() function for running tests
+target_link_libraries(
+    compiler_tests 
+    PRIVATE Catch2::Catch2WithMain
+)

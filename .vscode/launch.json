@@ -21,6 +21,24 @@
                 }
             ],
             "preLaunchTask": "Build with g++"
+        },
+        {
+            "name": "Debug: main_app",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}", 
+            "args": ["test.txt"],
+            "cwd": "${workspaceFolder}", // Run from project root
+            "miDebuggerPath": "/usr/bin/gdb" // Your WSL GDB path
+        },
+        {
+            "name": "Debug: compiler_tests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [], // Tests usually don't need arguments
+            "cwd": "${workspaceFolder}/build", // Running tests from build folder is common
+            "miDebuggerPath": "/usr/bin/gdb" // Your WSL GDB path
         }
     ]
 }
