@@ -51,7 +51,34 @@ std::string AssemblyCommandParser::dest() const {
     if (type() != C_INSTRUCTION) return "";
     size_t eqPos = cleanLine.find('=');
     if (eqPos != std::string::npos) {
-        return cleanLine.substr(0, eqPos);
+        return strip(cleanLine.substr(0, eqPos));
+    }
+    return "";
+}
+
+std::string AssemblyCommandParser::comp() const {
+    if (type() != C_INSTRUCTION) return "";
+    
+    std::string compPart = cleanLine;
+
+    size_t eqPos = compPart.find('=');
+    if (eqPos != std::string::npos) {
+        compPart = compPart.substr(eqPos + 1);
+    }
+
+    size_t semiPos = compPart.find(';');
+    if (semiPos != std::string::npos) {
+        compPart = compPart.substr(0, semiPos);
+    }
+    return strip(compPart);
+}
+
+std::string AssemblyCommandParser::jump() const {
+    if (type() != C_INSTRUCTION) return "";
+
+    size_t semiPos = cleanLine.find(';');
+    if (semiPos != std::string::npos) {
+        return strip(cleanLine.substr(semiPos + 1));
     }
     return "";
 }

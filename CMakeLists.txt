@@ -57,6 +57,7 @@ add_executable(
     test/parser_test.cpp
     test/HackAssembler/CodeTable_test.cpp
     test/HackAssembler/SymbolTable_test.cpp
+    test/HackAssembler/AssemblyCommandParser_test.cpp
     ${APP_IMPLEMENTATION_SOURCES}
     ${ASSEMBLER_SOURCES}
 )
