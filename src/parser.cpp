@@ -22,6 +22,13 @@ std::string Parser::advance() {
     return lines[currentIndex++];
 }
 
+std::string Parser::getCurrentLine() {
+    if (!hasMoreLines()) {
+        throw std::out_of_range("no more lines");
+    }
+    return lines[currentIndex];
+}
+
 void Parser::loadFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {

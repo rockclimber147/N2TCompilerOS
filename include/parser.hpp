@@ -12,6 +12,7 @@ public:
     bool hasMoreLines() const;
     std::string advance();
     void resetIndex();
+    std::string getCurrentLine();
 
 protected:
     size_t currentIndex;
