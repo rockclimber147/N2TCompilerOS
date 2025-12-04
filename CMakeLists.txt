@@ -14,19 +14,29 @@ set(APP_SOURCES
     src/AssemblyFileParser.cpp
 )
 
-# Create the executable target
+# Define implementation files (excluding main.cpp) for linking into libraries/tests
+set(APP_IMPLEMENTATION_SOURCES 
+    src/parser.cpp
+    src/AssemblyFileParser.cpp
+)
+
+# -----------------------------------------------------------------
+# 1. Main Application Target
+# -----------------------------------------------------------------
 add_executable(
     main_app
     ${APP_SOURCES}
 )
 
-# Tell the compiler where to find your headers (like "parser.hpp")
 target_include_directories(
     main_app 
     PRIVATE 
     include
 )
 
+# -----------------------------------------------------------------
+# 2. Catch2 Test Target Setup
+# -----------------------------------------------------------------
 include(FetchContent)
 FetchContent_Declare(
     Catch2
@@ -38,16 +48,16 @@ FetchContent_MakeAvailable(Catch2)
 # Define your test executable target
 add_executable(
     compiler_tests
-    test/parser_test.cpp         # <--- NEW TEST FILE (Where you'll write tests)
-    ${APP_SOURCES}               # <--- Link ALL application logic into the test executable
+    test/parser_test.cpp 
+    ${APP_IMPLEMENTATION_SOURCES} # <--- CRITICAL CHANGE: Only link implementation files
 )
 
 # Include directories for tests
 target_include_directories(
     compiler_tests 
     PRIVATE 
-    include                     # To find CommandParser.hpp
-    lib                         # To find fakeit.hpp (if you use it later)
+    include
+    lib
 )
 
 # Link tests to the Catch2 library, which provides the main() function for running tests
