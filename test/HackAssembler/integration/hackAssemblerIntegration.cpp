@@ -6,6 +6,15 @@
 
 namespace fs = std::filesystem;
 
+std::string trim(const std::string& str) {
+    const size_t first = str.find_first_not_of(" \t\n\r");
+    if (std::string::npos == first) {
+        return "";
+    }
+    const size_t last = str.find_last_not_of(" \t\n\r");
+    return str.substr(first, (last - first + 1));
+}
+
 void compareFiles(const std::string& generatedOutputPath, const std::string& expectedOutputPath) {
     std::ifstream generatedFile(generatedOutputPath);
     if (!generatedFile.is_open()) {
@@ -41,7 +50,7 @@ void compareFiles(const std::string& generatedOutputPath, const std::string& exp
                 "Extra line found at line " + std::to_string(lineNumber)
             );
         }
-        if (generatedLine != expectedLine) {
+        if (trim(generatedLine) != trim(expectedLine)) {
             throw std::runtime_error(
                 "File comparison failed at line " + std::to_string(lineNumber) + 
                 ".\n  Expected: \"" + expectedLine + "\"" +

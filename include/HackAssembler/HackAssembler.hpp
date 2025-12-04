@@ -32,15 +32,15 @@ private:
     bool debugMode_ = false;
 
     // Command processing helper
-    void hackWriteAddress(const std::string& symbol);
+    void hackWriteAddress(const std::string& symbol, std::string& rawLine);
 
     // Utility functions (Implementations for listing, binary conversion, etc.)
     void listingWriteHeader();
     void listingWriteGeneric(const std::string& line);
-    void listingWriteVarAddress(int varAddress);
-    void listingWriteConstant(const std::string& constant);
-    void listingWriteCommand();
-    void listingWriteLabel(const std::string& label);
+    void listingWriteVarAddress(int varAddress, std::string& rawLine);
+    void listingWriteConstant(const std::string& constant, std::string& rawLine);
+    void listingWriteCommand(std::string& rawLine);
+    void listingWriteLabel(const std::string& label, std::string& rawLine);
 
     // General utility functions
     static bool isNumeric(const std::string& str);

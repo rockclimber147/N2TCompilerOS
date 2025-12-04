@@ -62,42 +62,43 @@ void HackAssembler::secondPass() {
     codeLineNo_ = 0;
     listingWriteHeader();
     while (parser_.hasMoreLines()) {
+        if (!parser_.hasMoreLines()) int a = 5;
         string rawLine = parser_.advance();
         AssemblyCommandParser currentCommand(rawLine);
         auto command = currentCommand.type();
 
         if (command == AssemblyCommandParser::A_INSTRUCTION) {
-            hackWriteAddress(currentCommand.symbol());
+            hackWriteAddress(currentCommand.symbol(), rawLine);
         } else if (command == AssemblyCommandParser::C_INSTRUCTION) {
             string d = currentCommand.dest(); 
             string c = currentCommand.comp();
             string j = currentCommand.jump();
             string codeBinary = "111" + CodeTable::comp(c) + CodeTable::dest(d) + CodeTable::jump(j) + "\n";
 
-            listingWriteCommand();
+            listingWriteCommand(rawLine);
             hackWriter_ << codeBinary;
         } else if (command == AssemblyCommandParser::L_INSTRUCTION) {
-            listingWriteLabel(currentCommand.symbol());
+            listingWriteLabel(currentCommand.symbol(), rawLine);
         } else {
             listingWriteGeneric(rawLine);
         }
     }
 }
 
-void HackAssembler::hackWriteAddress(const string& symbol) {
+void HackAssembler::hackWriteAddress(const string& symbol, std::string& rawLine) {
     string binaryRep;
 
     if (isNumeric(symbol)) {
         int constant = std::stoi(symbol);
         binaryRep = getBinaryRepresentation(constant);
-        listingWriteConstant(symbol);
+        listingWriteConstant(symbol, rawLine);
     } else {
         if (!symbolTable_.hasSymbol(symbol)) {
             symbolTable_.addVariable(symbol);
         }
         int varAddress = symbolTable_.getAddress(symbol);
         binaryRep = getBinaryRepresentation(varAddress);
-        listingWriteVarAddress(varAddress);
+        listingWriteVarAddress(varAddress, rawLine);
     }
     hackWriter_ << binaryRep << "\n";
 }
@@ -113,36 +114,36 @@ void HackAssembler::listingWriteGeneric(const std::string& line) {
                 << line << "\n";
 }
 
-void HackAssembler::listingWriteVarAddress(int varAddress) {
+void HackAssembler::listingWriteVarAddress(int varAddress, std::string& rawLine) {
     std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
                               centerSpaces("RAM[" + std::to_string(varAddress) + "]") + "| "
-                              + parser_.getCurrentLine();
+                              + rawLine;
     listWriter_ << lineToWrite << "\n";
     codeLineNo_++;
 }
 
-void HackAssembler::listingWriteConstant(const std::string& constant) {
+void HackAssembler::listingWriteConstant(const std::string& constant, std::string& rawLine) {
     std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
                               centerSpaces(constant) + "| "
-                              + parser_.getCurrentLine();
+                              + rawLine;
     listWriter_ << lineToWrite << "\n";
     codeLineNo_++;
 }
 
-void HackAssembler::listingWriteCommand() {
+void HackAssembler::listingWriteCommand(std::string& rawLine) {
     std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
                               centerSpaces("") + "| " 
-                              + parser_.getCurrentLine();
+                              + rawLine;
     listWriter_ << lineToWrite << "\n";
     codeLineNo_++;
 }
 
-void HackAssembler::listingWriteLabel(const std::string& label) {
+void HackAssembler::listingWriteLabel(const std::string& label, std::string& rawLine) {
     int romAddress = symbolTable_.getAddress(label); 
 
     std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
                               centerSpaces("ROM[" + std::to_string(romAddress) + "]") +
-                              "| " + parser_.getCurrentLine();
+                              "| " + rawLine;
     listWriter_ << lineToWrite << "\n";
 }
 
