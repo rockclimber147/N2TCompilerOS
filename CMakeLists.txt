@@ -54,7 +54,8 @@ FetchContent_MakeAvailable(Catch2)
 # Define your test executable target
 add_executable(
     compiler_tests
-    test/parser_test.cpp 
+    test/parser_test.cpp
+    test/HackAssembler/CodeTable_test.cpp
     ${APP_IMPLEMENTATION_SOURCES}
     ${ASSEMBLER_SOURCES}
 )
