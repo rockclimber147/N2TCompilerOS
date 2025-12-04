@@ -11,6 +11,10 @@ bool Parser::hasMoreLines() const {
     return currentIndex < lines.size();
 }
 
+void Parser::resetIndex() {
+    currentIndex = 0;
+}
+
 std::string Parser::advance() {
     if (!hasMoreLines()) {
         throw std::out_of_range("no more lines");
