@@ -12,14 +12,18 @@ HackAssembler::HackAssembler(const string& fileName, const string& inputDir, con
     : parser_(inputDir + fileName + ".asm") 
 {
     debugMode_ = debugMode;
-    string hackFilePath = outputDir + fileName + "/" + fileName + ".hack";
-    string listingFilePath = outputDir + fileName + "/" + fileName + "_listing.txt";
+    string hackFilePath = outputDir + "/" + fileName + ".hack";
+    string listingFilePath = outputDir + "/" + fileName + "_listing.txt";
 
     hackWriter_.open(hackFilePath);
     listWriter_.open(listingFilePath);
 
-    if (!hackWriter_.is_open() || !listWriter_.is_open()) {
-        throw std::runtime_error("Could not open output files.");
+    if (!hackWriter_.is_open()) {
+        throw std::runtime_error("Could not open output hack file at " + hackFilePath);
+    }
+
+    if (!listWriter_.is_open()) {
+        throw std::runtime_error("Could not open output listing file at " + listingFilePath);
     }
 }
 

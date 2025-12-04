@@ -52,12 +52,13 @@ void compareFiles(const std::string& generatedOutputPath, const std::string& exp
 }
 
 void run_test_case(const std::string& folder, const std::string& testName) {
-    const fs::path BASE_DIR = fs::current_path();
+    const fs::path TEST_FILE_PATH = __FILE__;
+    const fs::path BASE_DIR = TEST_FILE_PATH.parent_path().parent_path().parent_path().parent_path(); 
     const fs::path TEST_ROOT = BASE_DIR / "test/HackAssembler/integration";
 
-    const fs::path INPUT_DIR = TEST_ROOT / "input" / folder / testName;
-    const fs::path EXPECTED_DIR = TEST_ROOT / "expectedOutput" / folder / testName;
-    const fs::path GENERATED_DIR = TEST_ROOT / "generatedOutput" / folder / testName;
+    const fs::path INPUT_DIR = TEST_ROOT / "input" / folder;
+    const fs::path EXPECTED_DIR = TEST_ROOT / "expectedOutput" / folder;
+    const fs::path GENERATED_DIR = TEST_ROOT / "generatedOutput" / folder;
 
     const std::string assemblyFile = testName + ".asm";
     const std::string hackFile = testName + ".hack";
@@ -84,6 +85,6 @@ TEST_CASE("Assembler Integration Tests", "[Assembler][Integration][Files]") {
     
     // Test for the Add program
     SECTION("Test Add.asm (Basic Arithmetic)") {
-        run_test_case("add", "add"); 
+        run_test_case("add", "Add"); 
     }
 }
