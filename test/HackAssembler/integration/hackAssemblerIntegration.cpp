@@ -92,8 +92,28 @@ void run_test_case(const std::string& folder, const std::string& testName) {
 
 TEST_CASE("Assembler Integration Tests", "[Assembler][Integration][Files]") {
     
-    // Test for the Add program
     SECTION("Test Add.asm (Basic Arithmetic)") {
         run_test_case("add", "Add"); 
+    }
+
+    SECTION("Test Max.asm (Basic Arithmetic)") {
+        run_test_case("max", "MaxL"); 
+    }
+    SECTION("Test MaxL.asm (Basic Arithmetic)") {
+        run_test_case("max", "MaxL"); 
+    }
+
+    SECTION("Test Rect.asm (Draw a Rectangle)") {
+        run_test_case("rect", "Rect"); 
+    }
+    SECTION("Test RectL.asm (Draw a Rectangle)") {
+        run_test_case("rect", "RectL"); 
+    }
+
+    SECTION("Test Pong.asm (Draw a Rectangle)") {
+        run_test_case("pong", "Pong"); 
+    }
+    SECTION("Test PongL.asm (Draw a Rectangle)") {
+        run_test_case("pong", "PongL"); 
     }
 }
