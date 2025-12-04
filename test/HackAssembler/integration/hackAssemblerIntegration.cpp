@@ -97,7 +97,7 @@ TEST_CASE("Assembler Integration Tests", "[Assembler][Integration][Files]") {
     }
 
     SECTION("Test Max.asm (Basic Arithmetic)") {
-        run_test_case("max", "MaxL"); 
+        run_test_case("max", "Max"); 
     }
     SECTION("Test MaxL.asm (Basic Arithmetic)") {
         run_test_case("max", "MaxL"); 
