@@ -40,5 +40,6 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "typeinfo": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "/home/rockclimber147/Projects/nand2tetris"
 }
