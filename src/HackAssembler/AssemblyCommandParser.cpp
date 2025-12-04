@@ -1,4 +1,4 @@
-#include "AssemblyFileParser.hpp"
+#include "HackAssembler/AssemblyCommandParser.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -12,11 +12,11 @@ std::string strip(const std::string& str) {
     return str.substr(first, (last - first + 1));
 }
 
-CommandParser::CommandParser(const std::string& line) {
+AssemblyCommandParser::AssemblyCommandParser(const std::string& line) {
     cleanAndSetLine(line);
 }
 
-void CommandParser::cleanAndSetLine(const std::string& line) {
+void AssemblyCommandParser::cleanAndSetLine(const std::string& line) {
     size_t commentPos = line.find("//");
     std::string noCommentPart = (commentPos != std::string::npos) 
                                 ? line.substr(0, commentPos) 
@@ -24,7 +24,7 @@ void CommandParser::cleanAndSetLine(const std::string& line) {
     cleanLine = strip(noCommentPart);
 }
 
-CommandParser::CommandType CommandParser::type() const {
+AssemblyCommandParser::CommandType AssemblyCommandParser::type() const {
     if (cleanLine.empty()) {
         return NO_COMMAND;
     }
@@ -37,7 +37,7 @@ CommandParser::CommandType CommandParser::type() const {
     return C_INSTRUCTION;
 }
 
-std::string CommandParser::symbol() const {
+std::string AssemblyCommandParser::symbol() const {
     if (type() == A_INSTRUCTION) {
         return cleanLine.substr(1);
     }
@@ -47,7 +47,7 @@ std::string CommandParser::symbol() const {
     return "";
 }
 
-std::string CommandParser::dest() const {
+std::string AssemblyCommandParser::dest() const {
     if (type() != C_INSTRUCTION) return "";
     size_t eqPos = cleanLine.find('=');
     if (eqPos != std::string::npos) {

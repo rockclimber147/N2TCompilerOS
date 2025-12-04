@@ -7,17 +7,22 @@ project(Nand2TetrisCompiler VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(ASSEMBLER_SOURCES
+    src/HackAssembler/AssemblyCommandParser.cpp
+    src/HackAssembler/CodeTable.cpp
+    src/HackAssembler/HackAssembler.cpp
+    src/HackAssembler/SymbolTable.cpp
+)
+
 # Define all source files for the application
 set(APP_SOURCES 
     main.cpp 
     src/parser.cpp
-    src/AssemblyFileParser.cpp
 )
 
 # Define implementation files (excluding main.cpp) for linking into libraries/tests
 set(APP_IMPLEMENTATION_SOURCES 
     src/parser.cpp
-    src/AssemblyFileParser.cpp
 )
 
 # -----------------------------------------------------------------
@@ -26,6 +31,7 @@ set(APP_IMPLEMENTATION_SOURCES
 add_executable(
     main_app
     ${APP_SOURCES}
+    ${ASSEMBLER_SOURCES}
 )
 
 target_include_directories(
@@ -49,7 +55,8 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(
     compiler_tests
     test/parser_test.cpp 
-    ${APP_IMPLEMENTATION_SOURCES} # <--- CRITICAL CHANGE: Only link implementation files
+    ${APP_IMPLEMENTATION_SOURCES}
+    ${ASSEMBLER_SOURCES}
 )
 
 # Include directories for tests

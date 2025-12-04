@@ -2,7 +2,7 @@
 
 #include <string>
 
-class CommandParser {
+class AssemblyCommandParser {
 public:
     enum CommandType {
         A_INSTRUCTION,
@@ -11,7 +11,7 @@ public:
         NO_COMMAND
     };
 
-    explicit CommandParser(const std::string& line);
+    explicit AssemblyCommandParser(const std::string& line);
 
     CommandType type() const;
     
