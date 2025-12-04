@@ -75,3 +75,22 @@ target_link_libraries(
     compiler_tests 
     PRIVATE Catch2::Catch2WithMain
 )
+
+add_executable(
+    integration_tests
+    test/HackAssembler/integration/hackAssemblerIntegration.cpp 
+    src/parser.cpp
+    ${ASSEMBLER_SOURCES} 
+)
+
+target_include_directories(
+    integration_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    integration_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain # This single target handles both headers and main() function
+)
