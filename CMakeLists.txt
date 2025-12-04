@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(APP_SOURCES 
     main.cpp 
     src/parser.cpp
+    src/AssemblyFileParser.cpp
 )
 
 # Create the executable target
