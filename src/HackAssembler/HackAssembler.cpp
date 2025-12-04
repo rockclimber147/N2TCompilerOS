@@ -2,13 +2,16 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <stdexcept>
+#include <bitset>
 
 using std::string;
 using std::ofstream;
 
-HackAssembler::HackAssembler(const string& fileName, const string& inputDir, const string& outputDir)
+HackAssembler::HackAssembler(const string& fileName, const string& inputDir, const string& outputDir, const bool debugMode)
     : parser_(inputDir + fileName + ".asm") 
 {
+    debugMode_ = debugMode;
     string hackFilePath = outputDir + fileName + "/" + fileName + ".hack";
     string listingFilePath = outputDir + fileName + "/" + fileName + "_listing.txt";
 
@@ -131,18 +134,51 @@ void HackAssembler::listingWriteCommand() {
 }
 
 void HackAssembler::listingWriteLabel(const std::string& label) {
-    // Access SymbolTable address using the provided SymbolTable::getAddress method
     int romAddress = symbolTable_.getAddress(label); 
 
     std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
                               centerSpaces("ROM[" + std::to_string(romAddress) + "]") +
                               "| " + parser_.getCurrentLine();
     listWriter_ << lineToWrite << "\n";
-    // NOTE: Labels do NOT increment codeLineNo_ in Pass 2, only A/C commands do.
 }
 
 void HackAssembler::debugPrint(const std::string& s) {
     if (debugMode_) {
         std::cout << s << std::endl;
     }
+}
+
+bool HackAssembler::isNumeric(const std::string& str) {
+    if (str.empty()) {
+        return false;
+    }
+    
+    return std::all_of(str.begin(), str.end(), 
+                       [](unsigned char c){ return std::isdigit(c); });
+}
+
+std::string HackAssembler::centerSpaces(const std::string& s) {
+    int repeat = listingSpacing_ - static_cast<int>(s.length());
+    if (repeat <= 0) {
+        return s;
+    }
+    
+    int left, right;
+    if (repeat % 2 == 1) {
+        left = repeat / 2;
+        right = repeat / 2 + 1;
+    } else {
+        left = repeat / 2;
+        right = repeat / 2;
+    }
+    return std::string(left, ' ') + s + std::string(right, ' ');
+}
+
+std::string HackAssembler::getBinaryRepresentation(int n) {
+    if (n < 0 || n > 32767) { 
+        throw std::out_of_range("Address value out of the 15-bit range (0-32767).");
+    }
+    std::string binaryRep = std::bitset<16>(n).to_string();
+
+    return binaryRep;
 }

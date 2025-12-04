@@ -11,7 +11,7 @@
 class HackAssembler {
 public:
     // Constructor: Initializes components and opens output files
-    HackAssembler(const std::string& fileName, const std::string& inputDir, const std::string& outputDir);
+    HackAssembler(const std::string& fileName, const std::string& inputDir, const std::string& outputDir, const bool debugMode = false);
 
     // Main assembly workflow methods
     void assemble();
@@ -35,7 +35,7 @@ private:
     void hackWriteAddress(const std::string& symbol);
 
     // Utility functions (Implementations for listing, binary conversion, etc.)
-   void listingWriteHeader();
+    void listingWriteHeader();
     void listingWriteGeneric(const std::string& line);
     void listingWriteVarAddress(int varAddress);
     void listingWriteConstant(const std::string& constant);
