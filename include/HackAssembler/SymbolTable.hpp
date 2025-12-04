@@ -23,6 +23,4 @@ public:
 private:
     std::unordered_map<std::string, int> symbolTable_;
     int nextVariableAddress_;
-    
-    void initializeBuiltInSymbols(); 
 };

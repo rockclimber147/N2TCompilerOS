@@ -40,6 +40,10 @@ int SymbolTable::getAddress(const std::string& symbol) {
 }
 
 void SymbolTable::addJumpLabel(const std::string& label, int address) {
+    if (hasSymbol(label)) {
+        throw std::invalid_argument("Error: Jump label '" + label + "' is already defined.");
+    }
+    if (address < 0) throw std::invalid_argument("Error: addresses must be greater than 0.");
     symbolTable_.emplace(label, address);
 }
 

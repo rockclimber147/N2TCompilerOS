@@ -30,8 +30,8 @@ TEST_CASE("CodeTable lookups (dest, comp, jump) return correct binary codes", "[
     }
 
     SECTION("Invalid mnemonics throw an out_of_range exception") {
-        REQUIRE_THROWS_AS(CodeTable::comp("D+Q"), std::out_of_range); // Bad comp code
-        REQUIRE_THROWS_AS(CodeTable::dest("BAD"), std::out_of_range); // Bad dest code
-        REQUIRE_THROWS_AS(CodeTable::jump("JXX"), std::out_of_range); // Bad jump code
+        REQUIRE_THROWS_AS(CodeTable::comp("D+Q"), std::out_of_range);
+        REQUIRE_THROWS_AS(CodeTable::dest("BAD"), std::out_of_range);
+        REQUIRE_THROWS_AS(CodeTable::jump("JXX"), std::out_of_range);
     }
 }
