@@ -47,14 +47,4 @@
         "--test-dir",
         "${buildDir}"
     ],
-
-    "catch2TestExplorer.buildDirectory": "${workspaceFolder}/build",
-    "catch2TestExplorer.testFilePatterns": [
-        "compiler_tests",
-        "integration_tests"
-    ],
-    "catch2TestExplorer.executables": [
-        "**/compiler_tests",
-        "**/integration_tests"
-    ]
 }
