@@ -41,5 +41,20 @@
     "streambuf": "cpp",
     "typeinfo": "cpp"
   },
-  "cmake.sourceDirectory": "/home/rockclimber147/Projects/nand2tetris"
+  "cmake.sourceDirectory": "/workspaces/N2TCompilerOS",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.ctestArgs": [
+        "--test-dir",
+        "${buildDir}"
+    ],
+
+    "catch2TestExplorer.buildDirectory": "${workspaceFolder}/build",
+    "catch2TestExplorer.testFilePatterns": [
+        "compiler_tests",
+        "integration_tests"
+    ],
+    "catch2TestExplorer.executables": [
+        "**/compiler_tests",
+        "**/integration_tests"
+    ]
 }

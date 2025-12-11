@@ -76,6 +76,11 @@ target_link_libraries(
     PRIVATE Catch2::Catch2WithMain
 )
 
+add_test(
+    NAME compiler_tests
+    COMMAND compiler_tests
+)
+
 add_executable(
     integration_tests
     test/HackAssembler/integration/hackAssemblerIntegration.cpp 
@@ -93,4 +98,9 @@ target_link_libraries(
     integration_tests 
     PRIVATE 
     Catch2::Catch2WithMain # This single target handles both headers and main() function
+)
+
+add_test(
+    NAME integration_tests
+    COMMAND integration_tests
 )

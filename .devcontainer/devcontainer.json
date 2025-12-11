@@ -1,0 +1,17 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    
+    // --- ADDED SECTION FOR VS CODE EXTENSIONS ---
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // CMake Tools extension (likely already installed, but good practice to include)
+                "ms-vscode.cmake-tools", 
+                // C/C++ Extension Pack (for intellisense, debugging, etc.)
+                "ms-vscode.cpptools",
+                // The crucial extension for recognizing and discovering Catch2 tests:
+                "jefferyb.catch2-test-explorer" 
+            ]
+        }
+    }
+}
