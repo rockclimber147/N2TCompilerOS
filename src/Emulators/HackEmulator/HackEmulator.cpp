@@ -19,10 +19,10 @@ void HackEmulator::loadProgram(const std::vector<int16_t>& instructions) {
     rom = instructions;
 }
 
-// --- Private Helper ---
-
 void HackEmulator::checkRamAddress(uint16_t addr) const {
-    if (addr >= MEMORY_SIZE) throw std::runtime_error("Illegal memory access at " + std::to_string(addr));
+    if (addr >= MEMORY_SIZE) {
+        throw std::out_of_range("Illegal memory access at " + std::to_string(addr)); 
+    }
 }
 
 // --- Execution Core ---

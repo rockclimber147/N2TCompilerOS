@@ -32,21 +32,6 @@ struct DecodedInstruction {
 
 class HackEmulator {
 private:
-    // --- Memory Map Constants (Hack Architecture) ---
-    // These define the base address for the memory segments in RAM
-    const static uint16_t RAM_BASE_ADDR    = 0;
-    const static uint16_t STATIC_BASE_ADDR = 16;
-
-    const static uint16_t STACK_POINTER  = 0;
-    const static uint16_t LCL_POINTER    = 1;
-    const static uint16_t ARG_POINTER    = 2;
-    const static uint16_t THIS_POINTER   = 3;
-    const static uint16_t THAT_POINTER   = 4;
-
-    const static uint16_t R_13          = 13;
-    const static uint16_t R_14          = 14;
-    const static uint16_t R_15          = 15;
-    
     // Total size of RAM including I/O (16K Data + 8K Screen + 1 Key)
     const static uint16_t MEMORY_SIZE      = 24577; 
     
@@ -68,38 +53,53 @@ private:
     int16_t alu(bool is_M_bit, uint8_t operation);
 
 public:
+    const static uint16_t RAM_BASE_ADDR    = 0;
+    const static uint16_t STATIC_BASE_ADDR = 16;
+
+    const static uint16_t STACK_POINTER  = 0;
+    const static uint16_t LCL_POINTER    = 1;
+    const static uint16_t ARG_POINTER    = 2;
+    const static uint16_t THIS_POINTER   = 3;
+    const static uint16_t THAT_POINTER   = 4;
+
+    const static uint16_t R_13          = 13;
+    const static uint16_t R_14          = 14;
+    const static uint16_t R_15          = 15;
+
     // --- Constructor & Initialization ---
-    HackEmulator() : ram(MEMORY_SIZE, 0) {} // Initialize RAM to zeros
+    HackEmulator();
 
-    void loadProgram(const std::vector<int16_t>& instructions) {
-        rom = instructions;
-    } 
-
+    void loadProgram(const std::vector<int16_t>& instructions);
     // --- Execution Core (To be implemented later) ---
     void executeNextInstruction(); 
 
     // --- Public Test/Debug Accessors ---
-    
-    // 1. Register Getters
     int16_t getARegister() const { return a_register; }
-    int16_t getDRegister() const { return d_register; }
-    uint16_t getPC() const { return program_counter; }
+    void setARegister(int16_t value) { a_register = value; }
 
-    // 2. Direct Memory Access (M = RAM[A])
-    int16_t getM() const { 
-        checkRamAddress(a_register);
-        return ram[a_register]; 
-    }
+    int16_t getDRegister() const { return d_register; }
+    void setDRegister(int16_t value) { d_register = value; }
+
+    uint16_t getPC() const { return program_counter; }
+    void setPC(uint16_t value) { program_counter = value; }
+
+    int16_t getM() const;
+
+    int16_t getSP() const { return ram[STACK_POINTER]; }
+    int16_t getLCL() const { return ram[LCL_POINTER]; }
+    int16_t getARG() const { return ram[ARG_POINTER]; }
+    int16_t getTHISPtr() const { return ram[THIS_POINTER]; }
+    int16_t getTHATPtr() const { return ram[THAT_POINTER]; }
+    
+    int16_t getR13() const { return ram[R_13]; }
+    int16_t getR14() const { return ram[R_14]; }
+    int16_t getR15() const { return ram[R_15]; }
     
     // 3. Segment Accessors (The methods you need for testing)
     
     // These methods return the value at a specific offset from a segment base address.
     
-    int16_t getStatic(uint16_t offset) const {
-        uint16_t addr = STATIC_BASE_ADDR + offset;
-        checkRamAddress(addr);
-        return ram[addr];
-    }
+    int16_t getStatic(uint16_t offset) const;
 
     int16_t getThis(uint16_t offset) const;
     

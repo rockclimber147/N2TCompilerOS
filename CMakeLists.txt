@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(EMULATOR_SOURCES
     src/Emulators/HackEmulator/FileLoader.cpp
+    src/Emulators/HackEmulator/HackEmulator.cpp
 )
 
 set(ASSEMBLER_SOURCES
@@ -158,6 +159,7 @@ add_test(
 add_executable(
     HackEmulator_unit_tests
     test/Emulators/HackEmulator/FileLoaderTest.cpp 
+    test/Emulators/HackEmulator/HackEmulatorTest.cpp
     ${EMULATOR_SOURCES} 
 )
 
