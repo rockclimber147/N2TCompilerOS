@@ -69,6 +69,7 @@ public:
     HackEmulator();
 
     void reset();
+    int16_t peek(uint16_t addr) const;
 
     void loadProgram(const std::vector<int16_t>& instructions);
     DecodedInstruction decode(int16_t instruction);

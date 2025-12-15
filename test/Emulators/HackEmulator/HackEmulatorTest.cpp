@@ -12,7 +12,7 @@ std::vector<int16_t> singleLineInstruction(int16_t command) {
     return {to_hack_instruction(command)};
 }
 
-TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
+TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator][Decode]") {
     HackEmulator emu;
 
     DecodedInstruction instr = emu.decode(0b0000000000000000);
@@ -100,7 +100,7 @@ TEST_CASE("HackEmulator executes single instructions correctly", "[HackEmulator]
     REQUIRE(emu.getPC() == 1);
 }
 
-TEST_CASE("HackEmulator handles jump logic correctly", "[HackEmulator]") {
+TEST_CASE("HackEmulator handles jump logic correctly", "[HackEmulator][Jump]") {
     HackEmulator emu;
 
     emu.reset();
@@ -194,4 +194,44 @@ TEST_CASE("HackEmulator: Segment Accessors and Pointers", "[HackEmulator][Memory
     SECTION("getThat returns correct value using RAM pointer") {
         REQUIRE(emu.getThat(1) == 789);
     }
+}
+
+TEST_CASE("Hackemulator: Simple Add", "[HackEmulator][Add]") {
+    HackEmulator emu;
+    // Adds 2 and 3 into address 0
+    std::vector<int16_t> commands = {
+        to_hack_instruction(0b0000000000000010), // @2
+        to_hack_instruction(0b1110110000010000), // D=A
+        to_hack_instruction(0b0000000000000011), // @3
+        to_hack_instruction(0b1110000010010000), // D=D+A
+        to_hack_instruction(0b0000000000000000), // @0
+        to_hack_instruction(0b1110001100001000)  // M=D
+    };
+
+    emu.loadProgram(commands);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 2);
+    REQUIRE(emu.getPC() == 1);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getDRegister() == 2);
+    REQUIRE(emu.getPC() == 2);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 3);
+    REQUIRE(emu.getPC() == 3);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getDRegister() == 5);
+    REQUIRE(emu.getPC() == 4);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 0);
+    REQUIRE(emu.getPC() == 5);
+
+    emu.executeNextInstruction();
+    REQUIRE(emu.getM() == 5);
+    REQUIRE(emu.peek(0) == 5);
+    REQUIRE(emu.getPC() == 6);
 }

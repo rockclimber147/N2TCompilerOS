@@ -122,7 +122,10 @@ int16_t HackEmulator::alu(bool is_M_bit, uint8_t comp_code) {
     return result;
 }
 
-
+int16_t HackEmulator::peek(uint16_t addr) const {
+    checkRamAddress(addr);
+    return ram[addr];
+}
 
 int16_t HackEmulator::getM() const { 
     checkRamAddress(a_register);
