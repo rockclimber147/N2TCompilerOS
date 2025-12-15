@@ -1,7 +1,7 @@
 #ifndef VM_COMMAND_PARSER_HPP
 #define VM_COMMAND_PARSER_HPP
 
-#include "VMTranslator/VMSpecififcations.hpp"
+#include "VMTranslator/VMSpecifications.hpp"
 #include <string>
 #include <vector>
 #include <sstream>
