@@ -1,4 +1,4 @@
-#include "ListingFileWriter.hpp"
+#include "HackAssembler/ListingFileWriter.hpp"
 
 // Helper to center text for formatting (moved from HackAssembler)
 std::string ListingFileWriter::centerSpaces(const std::string& s) {

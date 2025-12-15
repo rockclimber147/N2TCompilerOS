@@ -14,22 +14,17 @@ HackAssembler::HackAssembler(const string& fileName, const string& inputDir, con
 {
     debugMode_ = debugMode;
     string hackFilePath = outputDir + "/" + fileName + ".hack";
-    string listingFilePath = outputDir + "/" + fileName + "_listing.txt";
+    string listingFilePath = outputDir + "/" + fileName + ".listing.txt";
 
     hackWriter_.open(hackFilePath);
-    listWriter_.open(listingFilePath);
+    listWriter_ = std::make_unique<ListingFileWriter>(listingFilePath);
 
     if (!hackWriter_.is_open()) {
         throw std::runtime_error("Could not open output hack file at " + hackFilePath);
     }
-
-    if (!listWriter_.is_open()) {
-        throw std::runtime_error("Could not open output listing file at " + listingFilePath);
-    }
 }
 
 void HackAssembler::closeWriters() {
-    listWriter_.close();
     hackWriter_.close();
 }
 
@@ -61,7 +56,8 @@ void HackAssembler::firstPass() {
 
 void HackAssembler::secondPass() {
     codeLineNo_ = 0;
-    listingWriteHeader();
+    listWriter_->writeHeader(); 
+    
     while (parser_.hasMoreLines()) {
         if (!parser_.hasMoreLines()) int a = 5;
         string rawLine = parser_.advance();
@@ -76,12 +72,15 @@ void HackAssembler::secondPass() {
             string j = currentCommand.jump();
             string codeBinary = "111" + CodeTable::comp(c) + CodeTable::dest(d) + CodeTable::jump(j) + "\n";
 
-            listingWriteCommand(rawLine);
+            listWriter_->writeCommand(codeLineNo_, rawLine);
             hackWriter_ << codeBinary;
         } else if (command == AssemblyCommandParser::L_INSTRUCTION) {
-            listingWriteLabel(currentCommand.symbol(), rawLine);
+            string label = currentCommand.symbol();
+            int romAddress = symbolTable_.getAddress(label); 
+            
+            listWriter_->writeLabel(romAddress, label, rawLine);
         } else {
-            listingWriteGeneric(rawLine);
+            listWriter_->writeGeneric(rawLine);
         }
     }
 }
@@ -92,60 +91,20 @@ void HackAssembler::hackWriteAddress(const string& symbol, std::string& rawLine)
     if (isNumeric(symbol)) {
         int constant = std::stoi(symbol);
         binaryRep = getBinaryRepresentation(constant);
-        listingWriteConstant(symbol, rawLine);
+        
+        // CALL THE METHOD ON THE NEW WRITER OBJECT
+        listWriter_->writeConstant(codeLineNo_, symbol, rawLine);
     } else {
         if (!symbolTable_.hasSymbol(symbol)) {
             symbolTable_.addVariable(symbol);
         }
         int varAddress = symbolTable_.getAddress(symbol);
         binaryRep = getBinaryRepresentation(varAddress);
-        listingWriteVarAddress(varAddress, rawLine);
+        
+        // CALL THE METHOD ON THE NEW WRITER OBJECT
+        listWriter_->writeVarAddress(codeLineNo_, varAddress, rawLine);
     }
     hackWriter_ << binaryRep << "\n";
-}
-
-void HackAssembler::listingWriteHeader() {
-    listWriter_ << centerSpaces("ROM") << "|"
-                << centerSpaces("Address") << "| Source\n";
-}
-
-void HackAssembler::listingWriteGeneric(const std::string& line) {
-    listWriter_ << std::string(listingSpacing_, ' ') << "|"
-                << std::string(listingSpacing_, ' ') << "| "
-                << line << "\n";
-}
-
-void HackAssembler::listingWriteVarAddress(int varAddress, std::string& rawLine) {
-    std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
-                              centerSpaces("RAM[" + std::to_string(varAddress) + "]") + "| "
-                              + rawLine;
-    listWriter_ << lineToWrite << "\n";
-    codeLineNo_++;
-}
-
-void HackAssembler::listingWriteConstant(const std::string& constant, std::string& rawLine) {
-    std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
-                              centerSpaces(constant) + "| "
-                              + rawLine;
-    listWriter_ << lineToWrite << "\n";
-    codeLineNo_++;
-}
-
-void HackAssembler::listingWriteCommand(std::string& rawLine) {
-    std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
-                              centerSpaces("") + "| " 
-                              + rawLine;
-    listWriter_ << lineToWrite << "\n";
-    codeLineNo_++;
-}
-
-void HackAssembler::listingWriteLabel(const std::string& label, std::string& rawLine) {
-    int romAddress = symbolTable_.getAddress(label); 
-
-    std::string lineToWrite = centerSpaces(std::to_string(codeLineNo_)) + "|" +
-                              centerSpaces("ROM[" + std::to_string(romAddress) + "]") +
-                              "| " + rawLine;
-    listWriter_ << lineToWrite << "\n";
 }
 
 void HackAssembler::debugPrint(const std::string& s) {

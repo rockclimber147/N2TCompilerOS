@@ -3,10 +3,11 @@
 #include <string>
 #include <fstream>
 #include <memory>
-#include "parser.hpp"                           // Your file buffer/iterator
+#include "parser.hpp"
 #include "HackAssembler/SymbolTable.hpp"
 #include "HackAssembler/AssemblyCommandParser.hpp" 
-#include "HackAssembler/CodeTable.hpp"          // Static utility
+#include "HackAssembler/CodeTable.hpp"
+#include "HackAssembler/ListingFileWriter.hpp"
 
 class HackAssembler {
 public:
@@ -25,7 +26,7 @@ private:
     
     // Output File Streams
     std::ofstream hackWriter_;
-    std::ofstream listWriter_;
+    std::unique_ptr<ListingFileWriter> listWriter_;
     
     int codeLineNo_ = 0;
     const int listingSpacing_ = 10;
@@ -33,14 +34,6 @@ private:
 
     // Command processing helper
     void hackWriteAddress(const std::string& symbol, std::string& rawLine);
-
-    // Utility functions (Implementations for listing, binary conversion, etc.)
-    void listingWriteHeader();
-    void listingWriteGeneric(const std::string& line);
-    void listingWriteVarAddress(int varAddress, std::string& rawLine);
-    void listingWriteConstant(const std::string& constant, std::string& rawLine);
-    void listingWriteCommand(std::string& rawLine);
-    void listingWriteLabel(const std::string& label, std::string& rawLine);
 
     // General utility functions
     static bool isNumeric(const std::string& str);

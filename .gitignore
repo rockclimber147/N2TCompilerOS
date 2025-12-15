@@ -9,3 +9,9 @@ build/
 
 # Mac/Linux extras
 .DS_Store
+
+# Generated Listing files
+*.listing.txt
+
+# Test Outputs
+test/HackAssembler/integration/generatedOutput/*
