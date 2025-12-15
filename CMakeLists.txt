@@ -15,6 +15,10 @@ set(ASSEMBLER_SOURCES
     src/HackAssembler/ListingFileWriter.cpp
 )
 
+set(VMTRANSLATOR_SOURCES
+    src/VMTranslator/VMSpecifications.cpp
+)
+
 # Define all source files for the application
 set(APP_SOURCES 
     main.cpp 
@@ -34,6 +38,7 @@ add_executable(
     main_app
     ${APP_SOURCES}
     ${ASSEMBLER_SOURCES}
+    ${VMTRANSLATOR_SOURCES}
 )
 
 target_include_directories(
