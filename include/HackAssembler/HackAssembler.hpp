@@ -12,7 +12,7 @@
 class HackAssembler {
 public:
     // Constructor: Initializes components and opens output files
-    HackAssembler(const std::string& fileName, const std::string& inputDir, const std::string& outputDir, const bool debugMode = false);
+    HackAssembler(const std::string& fileName, const std::string& inputDir, const std::string& outputDir, const bool debugMode = false, const bool generateListing = false);
 
     // Main assembly workflow methods
     void assemble();

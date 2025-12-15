@@ -9,7 +9,7 @@
 using std::string;
 using std::ofstream;
 
-HackAssembler::HackAssembler(const string& fileName, const string& inputDir, const string& outputDir, const bool debugMode)
+HackAssembler::HackAssembler(const string& fileName, const string& inputDir, const string& outputDir, const bool debugMode, const bool generateListing)
     : parser_(inputDir + fileName + ".asm") 
 {
     debugMode_ = debugMode;
@@ -17,7 +17,7 @@ HackAssembler::HackAssembler(const string& fileName, const string& inputDir, con
     string listingFilePath = outputDir + "/" + fileName + ".listing.txt";
 
     hackWriter_.open(hackFilePath);
-    listWriter_ = std::make_unique<ListingFileWriter>(listingFilePath);
+    listWriter_ = std::make_unique<ListingFileWriter>(listingFilePath, generateListing);
 
     if (!hackWriter_.is_open()) {
         throw std::runtime_error("Could not open output hack file at " + hackFilePath);

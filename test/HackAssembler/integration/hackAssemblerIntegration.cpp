@@ -78,6 +78,7 @@ void run_test_case(const std::string& folder, const std::string& testName) {
         testName,
         INPUT_DIR.string() + "/",
         GENERATED_DIR.string() + "/",
+        false,
         false
     );
 

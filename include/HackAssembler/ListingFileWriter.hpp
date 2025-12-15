@@ -8,20 +8,13 @@
 
 class ListingFileWriter {
 public:
-    // Constructor opens the output stream
-    ListingFileWriter(const std::string& filePath) : listingSpacing_(10) {
-        writer_.open(filePath);
-        if (!writer_.is_open()) {
-            throw std::runtime_error("Could not open output listing file at " + filePath);
-        }
-    }
+    // New constructor signature includes the conditional flag
+    ListingFileWriter(const std::string& filePath, bool shouldGenerate);
+    
+    // Destructor remains the same (closes file if open)
+    ~ListingFileWriter();
 
-    ~ListingFileWriter() {
-        if (writer_.is_open()) {
-            writer_.close();
-        }
-    }
-
+    // All public methods remain the same (no 'override' needed)
     void writeHeader();
     void writeGeneric(const std::string& rawLine);
     void writeVarAddress(int romLineNo, int ramAddress, const std::string& rawLine);
@@ -31,10 +24,14 @@ public:
     
 private:
     std::ofstream writer_;
-    const int listingSpacing_;
+    const int listingSpacing_ = 10;
+    bool isActive_ = false; // New flag to track if writing should occur
 
     // Helper to center text for formatting
     std::string centerSpaces(const std::string& s);
+    
+    // New helper to perform the conditional check
+    inline bool shouldWrite() const { return isActive_ && writer_.is_open(); }
 };
 
 #endif // LISTING_FILE_WRITER_HPP
