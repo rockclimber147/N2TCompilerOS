@@ -7,6 +7,10 @@ project(Nand2TetrisCompiler VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(EMULATOR_SOURCES
+    src/Emulators/HackEmulator/FileLoader.cpp
+)
+
 set(ASSEMBLER_SOURCES
     src/HackAssembler/AssemblyCommandParser.cpp
     src/HackAssembler/CodeTable.cpp
@@ -59,7 +63,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# Define your test executable target
+# -----------------------------------------------------------------
+# Assembler unit tests
+# -----------------------------------------------------------------
 add_executable(
     assembler_unit_tests
     test/parser_test.cpp
@@ -89,6 +95,10 @@ add_test(
     COMMAND assembler_unit_tests
 )
 
+# -----------------------------------------------------------------
+# Assembler integration tests
+# -----------------------------------------------------------------
+
 add_executable(
     assembler_integration_tests
     test/HackAssembler/integration/hackAssemblerIntegration.cpp 
@@ -113,6 +123,10 @@ add_test(
     COMMAND assembler_integration_tests
 )
 
+# -----------------------------------------------------------------
+# VMTranslator unit tests
+# -----------------------------------------------------------------
+
 add_executable(
     vmTranslator_unit_tests
     test/VMTranslator/VMCommandParser_test.cpp 
@@ -135,4 +149,31 @@ target_link_libraries(
 add_test(
     NAME vmTranslator_unit_tests
     COMMAND vmTranslator_unit_tests
+)
+
+# -----------------------------------------------------------------
+# Emulator unit tests
+# -----------------------------------------------------------------
+
+add_executable(
+    HackEmulator_unit_tests
+    test/Emulators/HackEmulator/FileLoaderTest.cpp 
+    ${EMULATOR_SOURCES} 
+)
+
+target_include_directories(
+    HackEmulator_unit_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    HackEmulator_unit_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain
+)
+
+add_test(
+    NAME HackEmulator_unit_tests
+    COMMAND HackEmulator_unit_tests
 )
