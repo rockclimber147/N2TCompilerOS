@@ -28,6 +28,10 @@ int16_t create_C_instruction(uint8_t comp_code, uint8_t dest_code, uint8_t jump_
     return instruction;
 }
 
+std::vector<int16_t> singleLineInstruction(int16_t command) {
+    return {command};
+}
+
 TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
     HackEmulator emu;
 
@@ -90,13 +94,30 @@ TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
     REQUIRE(instr.comp_code == 0b000000);
 }
 
-TEST_CASE("HackEmulator: Simple Add", "HackEmulator") {
-    std::vector<int16_t> program = {
-        create_A_instruction(2),         // @2
-        create_C_instruction(0b1, 0b1, 0b1),
-    };
+TEST_CASE("HackEmulator executes single instructions correctly", "[HackEmulator][Execute]") {
     HackEmulator emu;
-    REQUIRE(1 == 1);
+
+    emu.reset();
+    emu.loadProgram(singleLineInstruction(0b0000000000000010)); // @2
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 2);
+    REQUIRE(emu.getPC() == 1);
+
+    emu.reset();
+    emu.loadProgram(singleLineInstruction(0b1110111111111000)); // ADM = 1
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 1);
+    REQUIRE(emu.getDRegister() == 1);
+    REQUIRE(emu.getM() == 1);
+    REQUIRE(emu.getPC() == 1);
+
+    emu.reset();
+    emu.loadProgram(singleLineInstruction(0b1110111111000000)); // 1
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 0);
+    REQUIRE(emu.getDRegister() == 0);
+    REQUIRE(emu.getM() == 0);
+    REQUIRE(emu.getPC() == 1);
 }
 
 TEST_CASE("HackEmulator: Segment Accessors and Pointers", "[HackEmulator][Memory]") {

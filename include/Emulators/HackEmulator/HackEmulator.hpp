@@ -68,6 +68,8 @@ public:
     // --- Constructor & Initialization ---
     HackEmulator();
 
+    void reset();
+
     void loadProgram(const std::vector<int16_t>& instructions);
     DecodedInstruction decode(int16_t instruction);
     // --- Execution Core (To be implemented later) ---

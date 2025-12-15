@@ -12,6 +12,13 @@ HackEmulator::HackEmulator() : ram(MEMORY_SIZE, 0),
 
 }
 
+void HackEmulator::reset() {
+    a_register = 0;
+    d_register = 0;
+    program_counter = 0;
+    ram.assign(MEMORY_SIZE, 0);
+}
+
 // --- Program Loading ---
 
 void HackEmulator::loadProgram(const std::vector<int16_t>& instructions) {
