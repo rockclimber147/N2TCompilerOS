@@ -112,3 +112,27 @@ add_test(
     NAME assembler_integration_tests
     COMMAND assembler_integration_tests
 )
+
+add_executable(
+    vmTranslator_unit_tests
+    test/VMTranslator/VMCommandParser_test.cpp 
+    src/parser.cpp
+    ${VMTRANSLATOR_SOURCES} 
+)
+
+target_include_directories(
+    vmTranslator_unit_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    vmTranslator_unit_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain # This single target handles both headers and main() function
+)
+
+add_test(
+    NAME vmTranslator_unit_tests
+    COMMAND vmTranslator_unit_tests
+)

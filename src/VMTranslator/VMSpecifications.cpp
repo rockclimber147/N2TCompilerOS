@@ -1,4 +1,4 @@
-#include "VMTranslator/VMSpecififcations.hpp"
+#include "VMTranslator/VMSpecifications.hpp"
 
 const std::unordered_map<std::string, int> VMSpecifications::SegmentPointerAddresses = {
     {"local", 1},
