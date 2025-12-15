@@ -36,18 +36,58 @@ TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
 
     instr = emu.decode(0b1111111111111111);
     REQUIRE(instr.type == InstructionType::C_INSTRUCTION);
-
     REQUIRE(instr.is_M_bit == true);
-    
     REQUIRE(instr.dest_A == true);
     REQUIRE(instr.dest_D == true);
     REQUIRE(instr.dest_M == true);
-    
     REQUIRE(instr.jump_JGT == true);
     REQUIRE(instr.jump_JEQ == true);
     REQUIRE(instr.jump_JLT == true);
-
     REQUIRE(instr.comp_code == 0b111111);
+
+    instr = emu.decode(0b1110000000000000);
+    REQUIRE(instr.type == InstructionType::C_INSTRUCTION);
+    REQUIRE(instr.is_M_bit == false);
+    REQUIRE(instr.dest_A == false);
+    REQUIRE(instr.dest_D == false);
+    REQUIRE(instr.dest_M == false);
+    REQUIRE(instr.jump_JGT == false);
+    REQUIRE(instr.jump_JEQ == false);
+    REQUIRE(instr.jump_JLT == false);
+    REQUIRE(instr.comp_code == 0b000000);
+
+    instr = emu.decode(0b1110000000001001);
+    REQUIRE(instr.type == InstructionType::C_INSTRUCTION);
+    REQUIRE(instr.is_M_bit == false);
+    REQUIRE(instr.dest_A == false);
+    REQUIRE(instr.dest_D == false);
+    REQUIRE(instr.dest_M == true);
+    REQUIRE(instr.jump_JGT == false);
+    REQUIRE(instr.jump_JEQ == false);
+    REQUIRE(instr.jump_JLT == true);
+    REQUIRE(instr.comp_code == 0b000000);
+
+    instr = emu.decode(0b1110000000010010);
+    REQUIRE(instr.type == InstructionType::C_INSTRUCTION);
+    REQUIRE(instr.is_M_bit == false);
+    REQUIRE(instr.dest_A == false);
+    REQUIRE(instr.dest_D == true);
+    REQUIRE(instr.dest_M == false);
+    REQUIRE(instr.jump_JGT == false);
+    REQUIRE(instr.jump_JEQ == true);
+    REQUIRE(instr.jump_JLT == false);
+    REQUIRE(instr.comp_code == 0b000000);
+
+    instr = emu.decode(0b1110000000100100);
+    REQUIRE(instr.type == InstructionType::C_INSTRUCTION);
+    REQUIRE(instr.is_M_bit == false);
+    REQUIRE(instr.dest_A == true);
+    REQUIRE(instr.dest_D == false);
+    REQUIRE(instr.dest_M == false);
+    REQUIRE(instr.jump_JGT == true);
+    REQUIRE(instr.jump_JEQ == false);
+    REQUIRE(instr.jump_JLT == false);
+    REQUIRE(instr.comp_code == 0b000000);
 }
 
 TEST_CASE("HackEmulator: Simple Add", "HackEmulator") {
