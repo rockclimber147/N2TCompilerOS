@@ -88,8 +88,6 @@ void VMCodeWriter::writeIf(const std::string& label) {
 }
 
 void VMCodeWriter::writePush(const std::string& segment, int index) {
-    writeAsComment("push " + segment + " " + std::to_string(index));
-
     if (segment == VMSpecifications::CONSTANT) {
         writeLine("@" + std::to_string(index));
         writeLine("D=A"); 
@@ -117,7 +115,6 @@ void VMCodeWriter::writePush(const std::string& segment, int index) {
 }
 
 void VMCodeWriter::writePop(const std::string& segment, int index) {
-    writeAsComment("pop " + segment + " " + std::to_string(index));
     if (segment == VMSpecifications::TEMP) {
         writeLine("@" + std::to_string(5 + index));
         writeLine("D=A"); 
@@ -175,8 +172,6 @@ void VMCodeWriter::writeCalculateSegmentAddress(const std::string& segment, int 
 }
 
 void VMCodeWriter::writeArithmetic(const std::string& command) {
-    writeAsComment(command); // Write the original VM command as a comment
-
     if (VMSpecifications::ArithmeticUnaryOperators.count(command)) {
         const std::string& op = VMSpecifications::ArithmeticUnaryOperators.at(command);
         

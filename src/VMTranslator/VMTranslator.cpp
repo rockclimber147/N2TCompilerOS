@@ -37,12 +37,10 @@ void VMTranslator::translateFile() {
         VMCommandParser currentCommand(rawLine);
         
         VMSpecifications::CommandType commandType = currentCommand.type();
-
+        codeWriter_->writeAsComment(rawLine);
         if (commandType == VMSpecifications::CommandType::C_INVALID) {
             continue; 
         }
-
-        codeWriter_->writeAsComment(currentCommand.getCleanCommand());
         
         if (commandType == VMSpecifications::CommandType::C_ARITHMETIC) {
             codeWriter_->writeArithmetic(currentCommand.arg1());
@@ -61,7 +59,7 @@ void VMTranslator::translateFile() {
         } 
         // ... Logic for C_LABEL, C_GOTO, C_CALL, etc. will go here ...
         
-        // debugPrint("Line " + std::to_string(codeLineNo) + " translated: " + currentCommand.getCleanCommand());
+        debugPrint("Line " + std::to_string(codeLineNo) + " translated: " + currentCommand.getCleanCommand());
     }
 }
 
