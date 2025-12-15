@@ -52,9 +52,9 @@ DecodedInstruction HackEmulator::decode(int16_t instruction) {
         
     } else {
         decoded.type = InstructionType::C_INSTRUCTION;
-        decoded.jump_JLT = (instruction >> 0) & 0x1;
+        decoded.jump_JGT = (instruction >> 0) & 0x1;
         decoded.jump_JEQ = (instruction >> 1) & 0x1;
-        decoded.jump_JGT = (instruction >> 2) & 0x1;
+        decoded.jump_JLT = (instruction >> 2) & 0x1;
 
         decoded.dest_M = (instruction >> 3) & 0x1;
         decoded.dest_D = (instruction >> 4) & 0x1;

@@ -4,32 +4,12 @@
 #include <vector>
 #include <cstdint>
 
-// Utility to create A-instructions (e.g., @100)
-int16_t create_A_instruction(uint16_t value) {
-    // A-Instruction has MSB=0, value in lower 15 bits
-    return static_cast<int16_t>(value & 0x7FFF);
-}
-
-// Utility to create C-instructions (comp=dest;jump)
-int16_t create_C_instruction(uint8_t comp_code, uint8_t dest_code, uint8_t jump_code) {
-    // C-Instruction format: 111 a cccccc ddd jjj
-    // Prefix 111 is 0xE000
-    int16_t instruction = 0xE000;
-    
-    // Comp (6 bits, c) -> bits 6-11
-    instruction |= (comp_code << 6);
-    
-    // Dest (3 bits, d) -> bits 3-5
-    instruction |= (dest_code << 3);
-    
-    // Jump (3 bits, j) -> bits 0-2
-    instruction |= jump_code;
-    
-    return instruction;
+int16_t to_hack_instruction(int input) {
+    return static_cast<int16_t>(input);
 }
 
 std::vector<int16_t> singleLineInstruction(int16_t command) {
-    return {command};
+    return {to_hack_instruction(command)};
 }
 
 TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
@@ -66,9 +46,9 @@ TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
     REQUIRE(instr.dest_A == false);
     REQUIRE(instr.dest_D == false);
     REQUIRE(instr.dest_M == true);
-    REQUIRE(instr.jump_JGT == false);
+    REQUIRE(instr.jump_JGT == true);
     REQUIRE(instr.jump_JEQ == false);
-    REQUIRE(instr.jump_JLT == true);
+    REQUIRE(instr.jump_JLT == false);
     REQUIRE(instr.comp_code == 0b000000);
 
     instr = emu.decode(0b1110000000010010);
@@ -88,9 +68,9 @@ TEST_CASE("HackEmulator decodes instructions correctly", "[HackEmulator]") {
     REQUIRE(instr.dest_A == true);
     REQUIRE(instr.dest_D == false);
     REQUIRE(instr.dest_M == false);
-    REQUIRE(instr.jump_JGT == true);
+    REQUIRE(instr.jump_JGT == false);
     REQUIRE(instr.jump_JEQ == false);
-    REQUIRE(instr.jump_JLT == false);
+    REQUIRE(instr.jump_JLT == true);
     REQUIRE(instr.comp_code == 0b000000);
 }
 
@@ -118,6 +98,76 @@ TEST_CASE("HackEmulator executes single instructions correctly", "[HackEmulator]
     REQUIRE(emu.getDRegister() == 0);
     REQUIRE(emu.getM() == 0);
     REQUIRE(emu.getPC() == 1);
+}
+
+TEST_CASE("HackEmulator handles jump logic correctly", "[HackEmulator]") {
+    HackEmulator emu;
+
+    emu.reset();
+    std::vector<int16_t> commands = {
+        to_hack_instruction(0b000000000001000), // @8
+        to_hack_instruction(0b1110000000000111) // 0;JMP
+    };
+    emu.loadProgram(commands);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 8);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 8);
+
+    commands = {
+        to_hack_instruction(0b000000000001000), // @8
+        to_hack_instruction(0b1110000000000001) // 0;JGT
+    };
+    emu.loadProgram(commands);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 8);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 2);
+
+    commands = {
+        to_hack_instruction(0b000000000001000), // @8
+        to_hack_instruction(0b1110000000000100) // 0;JLT
+    };
+    emu.loadProgram(commands);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 8);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 2);
+
+    emu.reset();
+    commands = {
+        to_hack_instruction(0b0000000000001000), // @8
+        to_hack_instruction(0b1110111111010000), // D=1
+        to_hack_instruction(0b1110001100000001)  // D;JGT
+    };
+    emu.loadProgram(commands);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 8);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getDRegister() == 1);
+    REQUIRE(emu.getPC() == 2);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 8);
+
+    emu.reset();
+    commands = {
+        to_hack_instruction(0b0000000000001000), // @8
+        to_hack_instruction(0b1110111111010000), // D=1
+        to_hack_instruction(0b1110001100000010)  // D;JEQ
+    };
+    emu.loadProgram(commands);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 8);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getDRegister() == 1);
+    REQUIRE(emu.getPC() == 2);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 3);
 }
 
 TEST_CASE("HackEmulator: Segment Accessors and Pointers", "[HackEmulator][Memory]") {
