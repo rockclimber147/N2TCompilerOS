@@ -35,10 +35,17 @@ private:
     // --- Memory Map Constants (Hack Architecture) ---
     // These define the base address for the memory segments in RAM
     const static uint16_t RAM_BASE_ADDR    = 0;
-    const static uint16_t STACK_BASE_ADDR  = 256;
     const static uint16_t STATIC_BASE_ADDR = 16;
-    const static uint16_t THIS_BASE_ADDR   = 32;
-    const static uint16_t THAT_BASE_ADDR   = 40;
+
+    const static uint16_t STACK_POINTER  = 0;
+    const static uint16_t LCL_POINTER    = 1;
+    const static uint16_t ARG_POINTER    = 2;
+    const static uint16_t THIS_POINTER   = 3;
+    const static uint16_t THAT_POINTER   = 4;
+
+    const static uint16_t R_13          = 13;
+    const static uint16_t R_14          = 14;
+    const static uint16_t R_15          = 15;
     
     // Total size of RAM including I/O (16K Data + 8K Screen + 1 Key)
     const static uint16_t MEMORY_SIZE      = 24577; 

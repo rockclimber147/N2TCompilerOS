@@ -128,14 +128,14 @@ int16_t HackEmulator::getStatic(uint16_t offset) const {
 }
 
 int16_t HackEmulator::getThis(uint16_t offset) const {
-    uint16_t base = ram[THIS_BASE_ADDR];
+    uint16_t base = ram[THIS_POINTER];
     uint16_t addr = base + offset;
     checkRamAddress(addr);
     return ram[addr];
 }
 
 int16_t HackEmulator::getThat(uint16_t offset) const {
-    uint16_t base = ram[THAT_BASE_ADDR]; 
+    uint16_t base = ram[THAT_POINTER]; 
     uint16_t addr = base + offset;
     checkRamAddress(addr);
     return ram[addr];
