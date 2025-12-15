@@ -24,3 +24,23 @@ const std::unordered_map<std::string, std::string> VMSpecifications::ArithmeticC
     {"gt", "JGT"},
     {"lt", "JLT"}
 };
+
+const std::set<std::string> VMSpecifications::validCommands = {
+    "push",
+    "pop",
+    "add",
+    "sub",
+    "neg",
+    "and",
+    "or",
+    "not",
+    "eq",
+    "gt",
+    "lt",
+    "label",
+    "goto",
+    "if-goto",
+    "call",
+    "function",
+    "return"
+};

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <set>
 
 class VMSpecifications {
 public:
@@ -10,6 +11,9 @@ public:
     static const std::unordered_map<std::string, std::string> ArithmeticUnaryOperators;
     static const std::unordered_map<std::string, std::string> ArithmeticBinaryOperators;
     static const std::unordered_map<std::string, std::string> ArithmeticCompareJumps;
+
+    static const std::set<std::string> validCommands;
+    
     VMSpecifications() = delete;
 };
 
