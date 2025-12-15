@@ -44,6 +44,7 @@ DecodedInstruction HackEmulator::decode(int16_t instruction) {
         decoded.addressOrValue = instruction & 0x7FFF; 
         
     } else {
+        decoded.type = InstructionType::C_INSTRUCTION;
         decoded.jump_JLT = (instruction >> 0) & 0x1;
         decoded.jump_JEQ = (instruction >> 1) & 0x1;
         decoded.jump_JGT = (instruction >> 2) & 0x1;

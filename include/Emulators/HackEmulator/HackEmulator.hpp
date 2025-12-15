@@ -48,7 +48,6 @@ private:
     void checkRamAddress(uint16_t addr) const;
 
     int16_t fetch();
-    DecodedInstruction decode(int16_t instruction);
     void execute(DecodedInstruction instruction);
     int16_t alu(bool is_M_bit, uint8_t operation);
 
@@ -70,18 +69,16 @@ public:
     HackEmulator();
 
     void loadProgram(const std::vector<int16_t>& instructions);
+    DecodedInstruction decode(int16_t instruction);
     // --- Execution Core (To be implemented later) ---
     void executeNextInstruction(); 
 
     // --- Public Test/Debug Accessors ---
     int16_t getARegister() const { return a_register; }
-    void setARegister(int16_t value) { a_register = value; }
 
     int16_t getDRegister() const { return d_register; }
-    void setDRegister(int16_t value) { d_register = value; }
 
     uint16_t getPC() const { return program_counter; }
-    void setPC(uint16_t value) { program_counter = value; }
 
     int16_t getM() const;
 
