@@ -1,4 +1,5 @@
 #include "HackAssembler/HackAssembler.hpp"
+#include "HackAssembler/ListingFileWriter.hpp"
 #include <iostream>
 #include <algorithm>
 #include <sstream>

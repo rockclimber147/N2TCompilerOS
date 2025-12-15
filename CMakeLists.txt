@@ -12,6 +12,7 @@ set(ASSEMBLER_SOURCES
     src/HackAssembler/CodeTable.cpp
     src/HackAssembler/HackAssembler.cpp
     src/HackAssembler/SymbolTable.cpp
+    src/HackAssembler/ListingFileWriter.cpp
 )
 
 # Define all source files for the application
@@ -23,6 +24,7 @@ set(APP_SOURCES
 # Define implementation files (excluding main.cpp) for linking into libraries/tests
 set(APP_IMPLEMENTATION_SOURCES 
     src/parser.cpp
+    src/FileParser.cpp
 )
 
 # -----------------------------------------------------------------
