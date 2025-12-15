@@ -17,6 +17,7 @@ set(ASSEMBLER_SOURCES
 
 set(VMTRANSLATOR_SOURCES
     src/VMTranslator/VMSpecifications.cpp
+    src/VMTranslator/VMCommandParser.cpp
 )
 
 # Define all source files for the application
