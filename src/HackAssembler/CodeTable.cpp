@@ -34,7 +34,7 @@ const unordered_map<string, string>& CodeTable::getJTable() {
 
 const unordered_map<string, string>& CodeTable::getCTable() {
     static const unordered_map<string, string> cTable = {
-{"0", "0101010"},
+        {"0", "0101010"},
         {"1",   "0111111"},
         {"-1",  "0111010"},
         {"D",   "0001100"},
