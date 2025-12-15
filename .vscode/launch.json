@@ -32,7 +32,7 @@
             "miDebuggerPath": "/usr/bin/gdb" // Your WSL GDB path
         },
         {
-            "name": "Debug: compiler_tests",
+            "name": "Debug: assembler_unit_tests",
             "type": "cppdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",

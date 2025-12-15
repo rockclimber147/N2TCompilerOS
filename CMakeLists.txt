@@ -61,7 +61,7 @@ FetchContent_MakeAvailable(Catch2)
 
 # Define your test executable target
 add_executable(
-    compiler_tests
+    assembler_unit_tests
     test/parser_test.cpp
     test/HackAssembler/CodeTable_test.cpp
     test/HackAssembler/SymbolTable_test.cpp
@@ -72,7 +72,7 @@ add_executable(
 
 # Include directories for tests
 target_include_directories(
-    compiler_tests 
+    assembler_unit_tests 
     PRIVATE 
     include
     lib
@@ -80,35 +80,35 @@ target_include_directories(
 
 # Link tests to the Catch2 library, which provides the main() function for running tests
 target_link_libraries(
-    compiler_tests 
+    assembler_unit_tests 
     PRIVATE Catch2::Catch2WithMain
 )
 
 add_test(
-    NAME compiler_tests
-    COMMAND compiler_tests
+    NAME assembler_unit_tests
+    COMMAND assembler_unit_tests
 )
 
 add_executable(
-    integration_tests
+    assembler_integration_tests
     test/HackAssembler/integration/hackAssemblerIntegration.cpp 
     src/parser.cpp
     ${ASSEMBLER_SOURCES} 
 )
 
 target_include_directories(
-    integration_tests 
+    assembler_integration_tests 
     PRIVATE 
     include 
 )
 
 target_link_libraries(
-    integration_tests 
+    assembler_integration_tests 
     PRIVATE 
     Catch2::Catch2WithMain # This single target handles both headers and main() function
 )
 
 add_test(
-    NAME integration_tests
-    COMMAND integration_tests
+    NAME assembler_integration_tests
+    COMMAND assembler_integration_tests
 )
