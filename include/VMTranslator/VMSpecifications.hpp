@@ -29,6 +29,13 @@ public:
     static const std::set<std::string> validCommands;
 
     VMSpecifications() = delete;
+
+    static const std::string TEMP;
+    static const std::string POINTER;
+    static const std::string THIS;
+    static const std::string THAT;
+    static const std::string STATIC;
+    static const std::string CONSTANT;
 };
 
 #endif

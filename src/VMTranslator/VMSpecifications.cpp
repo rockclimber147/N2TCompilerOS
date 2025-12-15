@@ -44,3 +44,10 @@ const std::set<std::string> VMSpecifications::validCommands = {
     "function",
     "return"
 };
+
+const std::string VMSpecifications::TEMP = "temp";
+const std::string VMSpecifications::POINTER = "pointer";
+const std::string VMSpecifications::THIS = "this";
+const std::string VMSpecifications::THAT = "that";
+const std::string VMSpecifications::STATIC = "static";
+const std::string VMSpecifications::CONSTANT = "constant";
