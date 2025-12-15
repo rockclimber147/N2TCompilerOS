@@ -32,6 +32,8 @@ void HackAssembler::assemble() {
     firstPass();
     parser_.resetIndex();
     secondPass();
+    parser_.resetIndex(); 
+    listingsPass();
 }
 
 void HackAssembler::firstPass() {
@@ -56,7 +58,6 @@ void HackAssembler::firstPass() {
 
 void HackAssembler::secondPass() {
     codeLineNo_ = 0;
-    listWriter_->writeHeader(); 
     
     while (parser_.hasMoreLines()) {
         if (!parser_.hasMoreLines()) int a = 5;
@@ -71,14 +72,43 @@ void HackAssembler::secondPass() {
             string c = currentCommand.comp();
             string j = currentCommand.jump();
             string codeBinary = "111" + CodeTable::comp(c) + CodeTable::dest(d) + CodeTable::jump(j) + "\n";
-
-            listWriter_->writeCommand(codeLineNo_, rawLine);
             hackWriter_ << codeBinary;
         } else if (command == AssemblyCommandParser::L_INSTRUCTION) {
             string label = currentCommand.symbol();
             int romAddress = symbolTable_.getAddress(label); 
+        }
+    }
+}
+
+void HackAssembler::listingsPass() {
+    codeLineNo_ = 0;
+    listWriter_->writeHeader(); 
+    
+    while (parser_.hasMoreLines()) {
+        string rawLine = parser_.advance();
+        AssemblyCommandParser currentCommand(rawLine);
+        auto command = currentCommand.type();
+
+        if (command == AssemblyCommandParser::A_INSTRUCTION) {
+            string symbol = currentCommand.symbol();
             
+            if (isNumeric(symbol)) {
+                listWriter_->writeConstant(codeLineNo_, symbol, rawLine);
+            } else {
+                int varAddress = symbolTable_.getAddress(symbol);
+                listWriter_->writeVarAddress(codeLineNo_, varAddress, rawLine);
+            }
+            codeLineNo_++;
+            
+        } else if (command == AssemblyCommandParser::C_INSTRUCTION) {
+            listWriter_->writeCommand(codeLineNo_, rawLine);
+            codeLineNo_++;
+            
+        } else if (command == AssemblyCommandParser::L_INSTRUCTION) {
+            string label = currentCommand.symbol();
+            int romAddress = symbolTable_.getAddress(label); 
             listWriter_->writeLabel(romAddress, label, rawLine);
+            
         } else {
             listWriter_->writeGeneric(rawLine);
         }
@@ -91,18 +121,12 @@ void HackAssembler::hackWriteAddress(const string& symbol, std::string& rawLine)
     if (isNumeric(symbol)) {
         int constant = std::stoi(symbol);
         binaryRep = getBinaryRepresentation(constant);
-        
-        // CALL THE METHOD ON THE NEW WRITER OBJECT
-        listWriter_->writeConstant(codeLineNo_, symbol, rawLine);
     } else {
         if (!symbolTable_.hasSymbol(symbol)) {
             symbolTable_.addVariable(symbol);
         }
         int varAddress = symbolTable_.getAddress(symbol);
         binaryRep = getBinaryRepresentation(varAddress);
-        
-        // CALL THE METHOD ON THE NEW WRITER OBJECT
-        listWriter_->writeVarAddress(codeLineNo_, varAddress, rawLine);
     }
     hackWriter_ << binaryRep << "\n";
 }

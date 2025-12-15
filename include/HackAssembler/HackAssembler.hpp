@@ -18,6 +18,7 @@ public:
     void assemble();
     void firstPass();
     void secondPass();
+    void listingsPass();
     void closeWriters();
 
 private:
