@@ -70,6 +70,33 @@ TEST_CASE("Hack Emulator runs SimpleAdd Test Case", "[HackEmulator][SimpleAdd]")
     REQUIRE(emu.peek(256) == 15);
 }
 
+TEST_CASE("Hack Emulator runs StackTest Test Case", "[HackEmulator][StackTest]") {
+    FileLoader loader;
+    HackEmulator emu;
+    
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/StackTest/StackTest.hack");
+    emu.loadProgram(commands);
+
+    emu.setRamValue(0, 256);
+
+    for (int i = 0; i < 600; i++) {
+        emu.executeNextInstruction();
+    }
+
+    REQUIRE(emu.peek(0) == 266);
+    REQUIRE(emu.peek(256) == -1);
+    REQUIRE(emu.peek(257) == 0);
+    REQUIRE(emu.peek(258) == 0);
+    REQUIRE(emu.peek(259) == 0);
+    REQUIRE(emu.peek(260) == -1);
+    REQUIRE(emu.peek(261) == 0);
+    REQUIRE(emu.peek(262) == -1);
+    REQUIRE(emu.peek(263) == 0);
+    REQUIRE(emu.peek(264) == 0);
+    REQUIRE(emu.peek(265) == -91);
+    
+}
+
 TEST_CASE("Hack Emulator runs StaticTest Test Case", "[HackEmulator][StaticTest]") {
     FileLoader loader;
     HackEmulator emu;
