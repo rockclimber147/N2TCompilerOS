@@ -183,3 +183,30 @@ add_test(
     NAME HackEmulator_unit_tests
     COMMAND HackEmulator_unit_tests
 )
+
+# -----------------------------------------------------------------
+# Emulator integration tests
+# -----------------------------------------------------------------
+
+add_executable(
+    HackEmulator_integration_tests
+    test/Emulators/HackEmulator/integration/HackEmulator_test.cpp
+    ${EMULATOR_SOURCES} 
+)
+
+target_include_directories(
+    HackEmulator_integration_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    HackEmulator_integration_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain
+)
+
+add_test(
+    NAME HackEmulator_integration_tests
+    COMMAND HackEmulator_integration_tests
+)

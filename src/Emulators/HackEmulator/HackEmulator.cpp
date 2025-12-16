@@ -22,8 +22,14 @@ void HackEmulator::reset() {
 // --- Program Loading ---
 
 void HackEmulator::loadProgram(const std::vector<int16_t>& instructions) {
+    if (instructions.size() > ROM_MAX_SIZE) {
+        throw std::runtime_error("Program size exceeds maximum Hack ROM capacity (32768 instructions).");
+    }
+    rom.assign(ROM_MAX_SIZE, 0);
+    std::copy(instructions.begin(), 
+              instructions.end(), 
+              rom.begin());
     program_counter = 0;
-    rom = instructions;
 }
 
 void HackEmulator::checkRamAddress(uint16_t addr) const {

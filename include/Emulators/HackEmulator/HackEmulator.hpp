@@ -64,7 +64,7 @@ public:
     const static uint16_t R_13          = 13;
     const static uint16_t R_14          = 14;
     const static uint16_t R_15          = 15;
-
+    const static size_t ROM_MAX_SIZE    = 32768;
     // --- Constructor & Initialization ---
     HackEmulator();
 
