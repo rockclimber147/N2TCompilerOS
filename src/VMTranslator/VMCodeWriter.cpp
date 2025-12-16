@@ -81,7 +81,7 @@ void VMCodeWriter::writeIf(const std::string& label) {
     writeLine("@0");
     writeLine("AM=M-1");
     writeLine("D=M");
-    writeLine("@" + label +);
+    writeLine("@" + label);
     writeLine("D;JNE");
 }
 
