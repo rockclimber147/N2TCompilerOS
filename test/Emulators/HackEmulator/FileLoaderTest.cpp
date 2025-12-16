@@ -113,6 +113,5 @@ TEST_CASE("FileLoader loads files correctly", "[FileLoader][type]") {
     SECTION("Throws exception for unknown file type") {
         REQUIRE_THROWS_AS(loader.loadFile("invalid.ext"), std::runtime_error);
     }
-    std::remove(TEST_HACK_PATH.c_str());
     std::remove(TEST_BIN_PATH.c_str());
 }
