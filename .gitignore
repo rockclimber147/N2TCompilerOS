@@ -14,4 +14,7 @@ build/
 *.listing.txt
 
 # Test Outputs
-test/HackAssembler/integration/generatedOutput/*
+test/HackAssembler/integration/generatedOutput/
+
+__input__/
+__output__/
