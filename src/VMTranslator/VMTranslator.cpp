@@ -106,7 +106,7 @@ void VMTranslator::translateSingleFile(const fs::path& vmFilePath) {
     codeWriter_->setFileName(fileName);
     currentFile_ = fileName;
     
-    codeWriter_->writeAsComment("--- file: " + fileName + ".vm ---");
+    codeWriter_->writeFileName(fileName);
     debugPrint("Starting translation of: " + fileName + ".vm");
 
     std::unique_ptr<Parser> fileParser;

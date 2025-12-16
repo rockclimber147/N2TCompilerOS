@@ -6,7 +6,7 @@
 using namespace std;
 
 // FullCompiler sets CWD is set to the project root.
-const string FILENAME = "StackTest.vm";
+const string FILENAME = "FibonacciElement";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 

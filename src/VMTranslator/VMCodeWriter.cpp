@@ -39,6 +39,32 @@ void VMCodeWriter::writeLine(const std::string& asmLine) {
         codeWriter_ << asmLine << "\n";
     }
 }
+
+void VMCodeWriter::writeFileName(const std::string& fileName) {
+    int width = 72;
+
+    std::string lineContent = fileName + ".vm";
+
+    int contentWidth = lineContent.length();
+    int paddingLength = width - contentWidth;
+    int leftPadding = paddingLength / 2;
+    int rightPadding = paddingLength - leftPadding; 
+
+    std::string separator(width, '-');
+    writeAsComment(separator); 
+
+    std::string leftSpace(leftPadding, ' ');
+    std::string rightSpace(rightPadding, ' ');
+    std::string centeredLine = leftSpace + lineContent + rightSpace;
+    writeAsComment(centeredLine); 
+    
+    writeAsComment(separator);
+}
+
+void VMCodeWriter::writeAsComment(const std::string& command) {
+    writeLine("// " + command);
+}
+
 void VMCodeWriter::writeSPIncrement() {
     writeLine("@SP");
     writeLine("M=M+1");
@@ -55,10 +81,6 @@ void VMCodeWriter::writePointerLoad(const std::string& segment, int index) {
 
 
 // --- CORE WRITING METHODS ---
-
-void VMCodeWriter::writeAsComment(const std::string& command) {
-    writeLine("// " + command);
-}
 
 void VMCodeWriter::writeInit() {
     // 1. Set SP = 256

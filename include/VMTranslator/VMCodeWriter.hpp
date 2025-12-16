@@ -34,6 +34,7 @@ public:
     void setFileName(const std::string& vmFileName) { currentFileName_ = vmFileName; }
     
     void writeInit();
+    void writeFileName(const std::string& fileName);
     void writeAsComment(const std::string& command);
     void writePush(const std::string& segment, int index);
     void writePop(const std::string& segment, int index);
