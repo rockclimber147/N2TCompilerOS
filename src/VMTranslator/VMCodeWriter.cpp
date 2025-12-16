@@ -186,7 +186,7 @@ void VMCodeWriter::writeArithmetic(const std::string& command) {
         writeLine("A=M"); 
         writeLine("D=M"); 
         writeLine("A=A-1");
-        writeLine("M=M" + op + "D");
+        writeLine("M=D" + op + "M");
         
     } else if (VMSpecifications::ArithmeticCompareJumps.count(command)) {
         const std::string& jumpCode = VMSpecifications::ArithmeticCompareJumps.at(command);
@@ -194,6 +194,7 @@ void VMCodeWriter::writeArithmetic(const std::string& command) {
         const std::string labelEnd = "COMP_END_" + std::to_string(jumpTarget_);
         
         writeSPDecrement();
+        writeLine("A=M");
         writeLine("D=M");
         writeLine("A=A-1");
         writeLine("D=M-D"); 
