@@ -1,32 +1,27 @@
-#ifndef VMTRANSLATOR_HPP
-#define VMTRANSLATOR_HPP
-
-#include "VMTranslator/VMCommandParser.hpp"
-#include "VMTranslator/VMSpecifications.hpp"
-#include "VMTranslator/VMCodeWriter.hpp"
-#include "parser.hpp" // <-- Include the generic file parser
-#include <fstream>
 #include <string>
-#include <memory> 
+#include <stdexcept>
+#include <memory>
+#include <filesystem>
+#include <vector>
+#include "VMTranslator/VMCodeWriter.hpp"
+
+namespace fs = std::filesystem;
 
 class VMTranslator {
 private:
-    std::string currentFile_ = "";
-    std::unique_ptr<Parser> fileParser_;
-
+    std::vector<fs::path> vmFilePaths_;
     std::unique_ptr<VMCodeWriter> codeWriter_;
-    
-    bool debugMode_ = false;
+    std::string currentFile_;
+    bool debugMode_;
 
-    void debugPrint(const std::string& s) const;
-    void translateFile();
-    
+    void collectVmFiles(const fs::path& inputPath);
+    void translateSingleFile(const fs::path& vmFilePath);
+    void closeWriter();
+    void debugPrint(const std::string& message); 
+
 public:
-    VMTranslator(const std::string& fileName, const std::string& inputDir, const std::string& outputDir, const bool debugMode);
+    // Constructor now takes a path that can be a file or a folder
+    VMTranslator(const std::string& inputPath, const std::string& outputDir, const bool debugMode);
     
     void translate();
-    
-    void closeWriter();
 };
-
-#endif

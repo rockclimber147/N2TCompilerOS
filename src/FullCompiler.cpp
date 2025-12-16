@@ -53,10 +53,10 @@ void FullCompiler::runVMTranslator() {
     cout << "--- Starting VM Translation ---" << endl;
 
     std::string asmOutputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.VMTranslatorOutputDir;
+    std::string inputPath = ensureTrailingSeparator(config_.InputFolder) + config_.InputFile;
 
     VMTranslator translator(
-        config_.InputFile, 
-        ensureTrailingSeparator(config_.InputFolder), 
+        inputPath, 
         asmOutputDir, 
         config_.VMDebug
     );
@@ -66,15 +66,23 @@ void FullCompiler::runVMTranslator() {
     cout << "VM Translation Complete. Output: " << asmOutputDir << config_.InputFile << ".asm" << endl;
 }
 
+std::string removeExtension(const std::string& filename, const std::string& ext) {
+    if (filename.length() >= ext.length() && 
+        filename.substr(filename.length() - ext.length()) == ext) {
+        return filename.substr(0, filename.length() - ext.length());
+    }
+    return filename;
+}
 
 void FullCompiler::runAssembler() {
     cout << "--- Starting Hack Assembly ---" << endl;
     
     std::string asmInputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.VMTranslatorOutputDir;
     std::string hackOutputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.HackAssemblerOutputDir;
+    std::string baseFileName = removeExtension(config_.InputFile, ".vm");
 
     HackAssembler assembler(
-        config_.InputFile, 
+        baseFileName, 
         asmInputDir,
         hackOutputDir,
         config_.HackAssemblerDebug,

@@ -6,7 +6,7 @@
 using namespace std;
 
 // FullCompiler sets CWD is set to the project root.
-const string FILENAME = "BasicLoop";
+const string FILENAME = "StackTest.vm";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
         config.HackAssemblerDebug = false;
         config.HackAssemblerGenerateListing = true;
 
-        cout << "\n--- Starting Full Compilation: " << FILENAME << ".vm ---" << endl;
+        cout << "\n--- Starting Full Compilation: " << FILENAME << " ---" << endl;
 
         FullCompiler compiler(config);
         compiler.run();
