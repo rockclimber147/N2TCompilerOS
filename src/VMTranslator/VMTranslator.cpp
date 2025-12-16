@@ -56,8 +56,25 @@ void VMTranslator::translateFile() {
             } else {
                 codeWriter_->writePop(segment, index);
             }
-        } 
-        // ... Logic for C_LABEL, C_GOTO, C_CALL, etc. will go here ...
+        } else if (commandType == VMSpecifications::CommandType::C_LABEL) {
+            codeWriter_->writeLabel(currentCommand.arg1());
+            
+        } else if (commandType == VMSpecifications::CommandType::C_GOTO) {
+            codeWriter_->writeGoTo(currentCommand.arg1());
+            
+        } else if (commandType == VMSpecifications::CommandType::C_IF_GOTO) {
+            codeWriter_->writeIf(currentCommand.arg1());
+            
+        } else if (commandType == VMSpecifications::CommandType::C_FUNCTION) {
+            codeWriter_->writeFunction(currentCommand.arg1(), currentCommand.arg2());
+            
+        } else if (commandType == VMSpecifications::CommandType::C_CALL) {
+            codeWriter_->writeCall(currentCommand.arg1(), currentCommand.arg2());
+            
+        } else if (commandType == VMSpecifications::CommandType::C_RETURN) {
+            codeWriter_->writeReturn();
+            
+        }
         
         debugPrint("Line " + std::to_string(codeLineNo) + " translated: " + currentCommand.getCleanCommand());
     }

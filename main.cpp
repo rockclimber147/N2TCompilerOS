@@ -6,7 +6,7 @@
 using namespace std;
 
 // FullCompiler sets CWD is set to the project root.
-const string FILENAME = "SimpleAdd";
+const string FILENAME = "BasicLoop";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 

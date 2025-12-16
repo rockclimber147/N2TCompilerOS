@@ -22,8 +22,8 @@ private:
     void writePointerLoad(const std::string& segment, int index);
     void writeSPIncrement();
     void writeSPDecrement();
-    
-    void writeCallImpl(const std::string& functionName, int nArgs);
+    void writePushDToStack();
+    void writePopToD();
     void writeCalculateSegmentAddress(const std::string& segment, int index);
     
 public:

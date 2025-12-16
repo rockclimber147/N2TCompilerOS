@@ -60,8 +60,6 @@ void VMCodeWriter::writeAsComment(const std::string& command) {
     writeLine("// " + command);
 }
 
-// --- BOOTSTRAP (writeInit) ---
-
 void VMCodeWriter::writeInit() {
     // 1. Set SP = 256
     writeLine("@256");
@@ -80,11 +78,11 @@ void VMCodeWriter::writeGoTo(const std::string& label) {
 }
 
 void VMCodeWriter::writeIf(const std::string& label) {
-    writeLine("@0\n");
-    writeLine("AM=M-1\n");
-    writeLine("D=M\n");
-    writeLine("@" + label + "\n");
-    writeLine("D;JNE\n");
+    writeLine("@0");
+    writeLine("AM=M-1");
+    writeLine("D=M");
+    writeLine("@" + label +);
+    writeLine("D;JNE");
 }
 
 void VMCodeWriter::writePush(const std::string& segment, int index) {
@@ -167,7 +165,7 @@ void VMCodeWriter::writeCalculateSegmentAddress(const std::string& segment, int 
         int pointerAddr = VMSpecifications::SegmentPointerAddresses.at(segment);
         writeLine("@" + std::to_string(pointerAddr));
         writeLine("A=M");
-        writeLine("A=A+D"); 
+        writeLine("A=D+A"); 
     } 
 }
 
@@ -229,24 +227,97 @@ void VMCodeWriter::writeArithmetic(const std::string& command) {
 
 // --- FUNCTION CALLS ---
 
+void VMCodeWriter::writePushDToStack() {
+    writeLine("@SP");
+    writeLine("A=M");
+    writeLine("M=D");
+    writeSPIncrement();
+}
+
+void VMCodeWriter::writePopToD() {
+    writeSPDecrement();
+    writeLine("A=M");
+    writeLine("D=M");
+}
+
+
 void VMCodeWriter::writeFunction(const std::string& functionName, int nVars) {
-    // TODO: Implement function label and local variable initialization loop.
+    writeLabel(functionName); 
+    for (int i = 0; i < nVars; ++i) {
+        writeLine("@SP");
+        writeLine("A=M");
+        writeLine("M=0");
+        writeLine("@SP");
+        writeLine("M=M+1");
+    }
 }
 
 void VMCodeWriter::writeCall(const std::string& functionName, int nArgs) {
-    // This public method simply calls the implementation.
-    writeCallImpl(functionName, nArgs);
-}
+    std::string returnLabel = functionName + "$ret." + std::to_string(jumpTarget_++);
 
-void VMCodeWriter::writeCallImpl(const std::string& functionName, int nArgs) {
-    // TODO: Implement the 5-step call sequence:
-    // 1. push return-address
-    // 2. push LCL, ARG, THIS, THAT
-    // 3. ARG = SP - nArgs - 5
-    // 4. LCL = SP
-    // 5. goto functionName
+    writeLine("@" + returnLabel);
+    writeLine("D=A");
+    writePushDToStack();
+
+    const std::vector<std::string> segments = {"LCL", "ARG", "THIS", "THAT"};
+    for (const auto& segment : segments) {
+        writeLine("@" + segment);
+        writeLine("D=M");
+        writePushDToStack();
+    }
+
+    writeLine("@SP");
+    writeLine("D=M"); 
+    writeLine("@" + std::to_string(nArgs + 5));
+    writeLine("D=D-A");
+    writeLine("@ARG");
+    writeLine("M=D");
+
+    writeLine("@SP");
+    writeLine("D=M");
+    writeLine("@LCL");
+    writeLine("M=D");
+
+    writeGoTo(functionName); 
+
+    writeLabel(returnLabel);
 }
 
 void VMCodeWriter::writeReturn() {
-    // TODO: Implement the 8-step return sequence.
+    writeLine("@LCL");
+    writeLine("D=M");
+    writeLine("@R13"); 
+    writeLine("M=D");
+
+    writeLine("@5");
+    writeLine("A=D-A"); 
+    writeLine("D=M");
+    writeLine("@R14"); 
+    writeLine("M=D");
+
+    writePopToD();
+    writeLine("@ARG");
+    writeLine("A=M");
+    writeLine("M=D"); 
+
+    writeLine("@ARG");
+    writeLine("D=M+1");
+    writeLine("@SP");
+    writeLine("M=D"); 
+
+    const std::vector<std::string> segments = {"THAT", "THIS", "ARG", "LCL"};
+    int offset = 1; 
+    for (const auto& segment : segments) {
+        writeLine("@R13");
+        writeLine("D=M");           
+        writeLine("@" + std::to_string(offset));
+        writeLine("A=D-A");
+        writeLine("D=M");
+        writeLine("@" + segment); 
+        writeLine("M=D"); 
+        offset++;
+    }
+    writeLine("@R14");
+    writeLine("A=M");
+    writeLine("0;JMP");
 }
