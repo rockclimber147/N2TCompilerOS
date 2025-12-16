@@ -235,3 +235,46 @@ TEST_CASE("Hackemulator: Simple Add", "[HackEmulator][Add]") {
     REQUIRE(emu.peek(0) == 5);
     REQUIRE(emu.getPC() == 6);
 }
+
+TEST_CASE("HackEmulator: JNE Jump Taken (D != 0)", "[HackEmulator][LoopPinpoint]") {
+    HackEmulator emu;
+    
+    emu.reset();
+    emu.setDRegister(5); // Simulate D being popped as 5 (n>0)
+
+    std::vector<int16_t> commands = {
+        to_hack_instruction(0b0000000000001010), // @10 (Target address)
+        to_hack_instruction(0b1110001100000101)  // D;JNE (0;JLT|JGT)
+    };
+    
+    emu.loadProgram(commands);
+    
+    // PC=0: Execute @10
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 10);
+    REQUIRE(emu.getPC() == 1);
+
+    // PC=1: Execute D;JNE. Result is D=5 (not 0). Jump must be taken.
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 10); // PC should jump to A=10
+}
+
+TEST_CASE("HackEmulator: JNE Jump Not Taken (D == 0)", "[HackEmulator][LoopPinpoint]") {
+    HackEmulator emu;
+    
+    emu.reset();
+    emu.setDRegister(0);
+
+    std::vector<int16_t> commands = {
+        to_hack_instruction(0b0000000000001010), // @10 (Target address)
+        to_hack_instruction(0b1110001100000101)  // D;JNE (0;JLT|JGT)
+    };
+    
+    emu.loadProgram(commands);
+    
+    emu.executeNextInstruction();
+    REQUIRE(emu.getARegister() == 10);
+    REQUIRE(emu.getPC() == 1);
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == 2);
+}

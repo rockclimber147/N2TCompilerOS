@@ -161,3 +161,15 @@ void HackEmulator::setRamValue(uint16_t addr, int16_t value) {
     checkRamAddress(addr);
     ram[addr] = value;
 }
+
+void HackEmulator::setARegister(int16_t value) {
+    a_register = value;
+}
+
+void HackEmulator::setDRegister(int16_t value) {
+    d_register = value;
+}
+
+void HackEmulator::setPC(uint16_t value) {
+    program_counter = value;
+}

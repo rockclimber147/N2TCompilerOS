@@ -78,10 +78,12 @@ public:
 
     // --- Public Test/Debug Accessors ---
     int16_t getARegister() const { return a_register; }
-
     int16_t getDRegister() const { return d_register; }
-
     uint16_t getPC() const { return program_counter; }
+
+    void setARegister(int16_t value);
+    void setDRegister(int16_t value);
+    void setPC(uint16_t value);
 
     int16_t getM() const;
 
