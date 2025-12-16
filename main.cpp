@@ -1,56 +1,61 @@
 #include <iostream>
-#include <vector>
 #include <string>
-#include <memory>
-#include "VMTranslator/VMTranslator.hpp"
-#include "HackAssembler/HackAssembler.hpp"
+#include <filesystem>
+#include <stdexcept>
+#include "FullCompiler.hpp" 
 
 using namespace std;
 
-// --- Define file and directory constants ---
 const string FILENAME = "BasicTest";
-const string INPUT_DIR = "../__input__/";
-const string OUTPUT_DIR = "../__output__/"; 
+const string INPUT_DIR = "__input__/";
+const string OUTPUT_DIR = "__output__/"; 
+
+
+void setProjectCWD() {
+    try {
+        std::filesystem::path currentExeDir = std::filesystem::current_path();
+        std::filesystem::path projectRootPath = currentExeDir.parent_path();
+        
+        if (currentExeDir.string().find("build") != string::npos) {
+            projectRootPath = currentExeDir.parent_path();
+        }
+        
+        std::filesystem::current_path(projectRootPath); 
+        cout << "CWD set to project root: " << std::filesystem::current_path().string() << endl;
+
+    } catch (const std::exception& e) {
+        cerr << "Warning: Could not set CWD. File paths may be incorrect. " << e.what() << endl;
+    }
+}
 
 
 int main(int argc, char* argv[]) {
     try {
-        cout << "--- Starting VM Translation: " << FILENAME << ".vm ---" << endl;
-        VMTranslator translator(
-            FILENAME, 
-            INPUT_DIR, 
-            OUTPUT_DIR + "asm/", 
-            false
-        );
+        setProjectCWD();
+        CompilerConfig config;
+        
+        config.command = Command::COMPILE;
+        config.InputFile = FILENAME;
+        config.InputFolder = INPUT_DIR;
+        config.RootOutputDir = OUTPUT_DIR; 
 
-        translator.translate();
+        config.VMTranslatorOutputDir = "asm/"; 
+        config.HackAssemblerOutputDir = "hack/"; 
 
-        // 3. Close and confirm
-        cout << "\n--- Translation Complete ---" << endl;
-        cout << "Input: " << INPUT_DIR << FILENAME << ".vm" << endl;
-        cout << "Output: " << OUTPUT_DIR << "/asm/" << FILENAME << ".asm" << endl;
+        config.VMDebug = false;
+        config.HackAssemblerDebug = false;
+        config.HackAssemblerGenerateListing = true;
 
-                cout << "--- Starting Assembly: " << FILENAME << ".vm ---" << endl;
-        HackAssembler assembler(
-            FILENAME, 
-            OUTPUT_DIR + "asm/", 
-            OUTPUT_DIR + "hack/", 
-            true
-        );
+        cout << "\n--- Starting Full Compilation: " << FILENAME << ".vm ---" << endl;
 
-        assembler.assemble();
-
-        // 3. Close and confirm
-        cout << "\n--- Assembly ---" << endl;
-        cout << "Input: " << OUTPUT_DIR << "/asm/" << FILENAME << ".asm" << endl;
-        cout << "Output: " << OUTPUT_DIR << "/asm/" << FILENAME << ".hack" << endl;
+        FullCompiler compiler(config);
+        compiler.run();
         
     }
     catch (const std::runtime_error& e) {
-        cerr << "\n!!! Fatal Runtime Error during Translation !!!" << endl;
+        cerr << "\n!!! FATAL COMPILER ERROR !!!" << endl;
         cerr << "Error: " << e.what() << endl;
         return 1;
     }
-    // Return 0 if successful
     return 0;
 }

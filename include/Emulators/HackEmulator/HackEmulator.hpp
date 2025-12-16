@@ -1,4 +1,4 @@
-#ifndef HACK_EMULATOR_HPP
+    #ifndef HACK_EMULATOR_HPP
 #define HACK_EMULATOR_HPP
 
 #include <vector>

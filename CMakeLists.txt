@@ -31,12 +31,14 @@ set(VMTRANSLATOR_SOURCES
 set(APP_SOURCES 
     main.cpp 
     src/parser.cpp
+    src/FullCompiler.cpp
 )
 
 # Define implementation files (excluding main.cpp) for linking into libraries/tests
 set(APP_IMPLEMENTATION_SOURCES 
     src/parser.cpp
     src/FileParser.cpp
+    src/FullCompiler.cpp
 )
 
 # -----------------------------------------------------------------
