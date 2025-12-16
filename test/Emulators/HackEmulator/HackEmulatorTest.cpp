@@ -278,3 +278,127 @@ TEST_CASE("HackEmulator: JNE Jump Not Taken (D == 0)", "[HackEmulator][LoopPinpo
     emu.executeNextInstruction();
     REQUIRE(emu.getPC() == 2);
 }
+
+void execute_jump_test(HackEmulator& emu, int16_t d_value, int16_t jump_bits, uint16_t target_pc, uint16_t expected_pc) {
+    emu.reset();
+    emu.setDRegister(d_value);
+    std::vector<int16_t> commands = {
+        to_hack_instruction(target_pc),
+        to_hack_instruction(0b1110001100000000 | jump_bits)
+    };
+    
+    emu.loadProgram(commands);
+    emu.executeNextInstruction(); 
+    emu.executeNextInstruction();
+    REQUIRE(emu.getPC() == expected_pc);
+}
+
+const uint16_t TARGET = 10;
+const uint16_t NEXT_PC = 2;
+
+
+TEST_CASE("HackEmulator: Comprehensive Jump Logic (D-register result)", "[HackEmulator][Jumps]") {
+    HackEmulator emu;
+
+    // --- TEST 1: Simple Jumps (JGT, JEQ, JLT) ---
+
+    SECTION("JGT (Jump if Result > 0)") {
+        // JGT bits: 001
+        const int16_t JUMP_BITS = 0b001; 
+        
+        // D = 5 (> 0) -> Jump Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, TARGET);
+        
+        // D = 0 (= 0) -> Jump Not Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, NEXT_PC); 
+
+        // D = -5 (< 0) -> Jump Not Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, NEXT_PC); 
+    }
+    
+    SECTION("JEQ (Jump if Result == 0)") {
+        // JEQ bits: 010
+        const int16_t JUMP_BITS = 0b010; 
+
+        // D = 5 (> 0) -> Jump Not Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, NEXT_PC);
+        
+        // D = 0 (= 0) -> Jump Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, TARGET); 
+
+        // D = -5 (< 0) -> Jump Not Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, NEXT_PC); 
+    }
+    
+    SECTION("JLT (Jump if Result < 0)") {
+        // JLT bits: 100
+        const int16_t JUMP_BITS = 0b100; 
+
+        // D = 5 (> 0) -> Jump Not Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, NEXT_PC);
+        
+        // D = 0 (= 0) -> Jump Not Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, NEXT_PC); 
+
+        // D = -5 (< 0) -> Jump Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, TARGET); 
+    }
+
+    // --- TEST 2: Composite Jumps (JNE, JGE, JLE, JNZ) ---
+    
+    SECTION("JNE (Jump if Result != 0) - JGT|JLT") {
+        // JNE bits: 101 (Your successful test case)
+        const int16_t JUMP_BITS = 0b101; 
+
+        // D = 5 (> 0) -> Jump Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, TARGET); 
+        
+        // D = 0 (= 0) -> Jump Not Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, NEXT_PC); 
+
+        // D = -5 (< 0) -> Jump Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, TARGET); 
+    }
+    
+    SECTION("JGE (Jump if Result >= 0) - JGT|JEQ") {
+        // JGE bits: 011
+        const int16_t JUMP_BITS = 0b011; 
+
+        // D = 5 (> 0) -> Jump Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, TARGET); 
+        
+        // D = 0 (= 0) -> Jump Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, TARGET); 
+
+        // D = -5 (< 0) -> Jump Not Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, NEXT_PC); 
+    }
+    
+    SECTION("JLE (Jump if Result <= 0) - JEQ|JLT") {
+        // JLE bits: 110
+        const int16_t JUMP_BITS = 0b110; 
+
+        // D = 5 (> 0) -> Jump Not Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, NEXT_PC); 
+        
+        // D = 0 (= 0) -> Jump Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, TARGET); 
+
+        // D = -5 (< 0) -> Jump Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, TARGET); 
+    }
+    
+    SECTION("JMP (Jump Unconditional) - JGT|JEQ|JLT") {
+        // JMP bits: 111 (Your previous successful test case)
+        const int16_t JUMP_BITS = 0b111; 
+
+        // D = 5 (> 0) -> Jump Taken
+        execute_jump_test(emu, 5, JUMP_BITS, TARGET, TARGET); 
+        
+        // D = 0 (= 0) -> Jump Taken
+        execute_jump_test(emu, 0, JUMP_BITS, TARGET, TARGET); 
+
+        // D = -5 (< 0) -> Jump Taken
+        execute_jump_test(emu, -5, JUMP_BITS, TARGET, TARGET); 
+    }
+}
