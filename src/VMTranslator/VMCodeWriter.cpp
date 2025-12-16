@@ -181,12 +181,17 @@ void VMCodeWriter::writeArithmetic(const std::string& command) {
         
     } else if (VMSpecifications::ArithmeticBinaryOperators.count(command)) {      
         const std::string& op = VMSpecifications::ArithmeticBinaryOperators.at(command);
-        
+        std::string opCommand;
+        if (op == "-") {
+            opCommand = "M=M-D";
+        } else {
+            opCommand = "M=D" + op + "M";
+        }
         writeSPDecrement();
         writeLine("A=M"); 
         writeLine("D=M"); 
         writeLine("A=A-1");
-        writeLine("M=D" + op + "M");
+        writeLine(opCommand);
         
     } else if (VMSpecifications::ArithmeticCompareJumps.count(command)) {
         const std::string& jumpCode = VMSpecifications::ArithmeticCompareJumps.at(command);
