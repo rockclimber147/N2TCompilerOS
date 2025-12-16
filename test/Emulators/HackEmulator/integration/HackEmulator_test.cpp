@@ -10,7 +10,7 @@ TEST_CASE("Hack Emulator runs BasicLoop Test Case", "[HackEmulator][BasicLoop]")
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/BasicLoop/BasicLoop.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project8/Program Flow/BasicLoop/BasicLoop.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -30,7 +30,7 @@ TEST_CASE("Hack Emulator runs BasicTest Test Case", "[HackEmulator][BasicTest]")
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/BasicTest/BasicTest.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project7/MemoryAccess/BasicTest/BasicTest.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -59,7 +59,7 @@ TEST_CASE("Hack Emulator runs FibonacciSeries Test Case", "[HackEmulator][Fibona
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/FibonacciSeries/FibonacciSeries.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project8/Program Flow/FibonacciSeries/FibonacciSeries.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -84,7 +84,7 @@ TEST_CASE("Hack Emulator runs PointerTest Test Case", "[HackEmulator][PointerTes
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/PointerTest/PointerTest.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project7/MemoryAccess/PointerTest/PointerTest.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -104,7 +104,7 @@ TEST_CASE("Hack Emulator runs SimpleAdd Test Case", "[HackEmulator][SimpleAdd]")
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/SimpleAdd/SimpleAdd.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project7/StackArithmetic/SimpleAdd/SimpleAdd.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -121,7 +121,7 @@ TEST_CASE("Hack Emulator runs StackTest Test Case", "[HackEmulator][StackTest]")
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/StackTest/StackTest.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project7/StackArithmetic/StackTest/StackTest.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
@@ -148,7 +148,7 @@ TEST_CASE("Hack Emulator runs StaticTest Test Case", "[HackEmulator][StaticTest]
     FileLoader loader;
     HackEmulator emu;
     
-    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/StaticTest/StaticTest.hack");
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/Project7/MemoryAccess/StaticTest/StaticTest.hack");
     emu.loadProgram(commands);
 
     emu.setRamValue(0, 256);
