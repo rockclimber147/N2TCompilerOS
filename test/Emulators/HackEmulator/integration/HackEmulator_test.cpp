@@ -6,6 +6,26 @@
 #include "Emulators/HackEmulator/FileLoader.hpp"
 #include "Emulators/HackEmulator/HackEmulator.hpp"
 
+TEST_CASE("Hack Emulator runs BasicLoop Test Case", "[HackEmulator][BasicLoop]") {
+    FileLoader loader;
+    HackEmulator emu;
+    
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/BasicLoop/BasicLoop.hack");
+    emu.loadProgram(commands);
+
+    emu.setRamValue(0, 256);
+    emu.setRamValue(1, 300);
+    emu.setRamValue(2, 400);
+    emu.setRamValue(400, 3);
+
+    for (int i = 0; i < 600; i++) {
+        emu.executeNextInstruction();
+    }
+
+    REQUIRE(emu.peek(0) == 257);
+    REQUIRE(emu.peek(256) == 6);
+}
+
 TEST_CASE("Hack Emulator runs BasicTest Test Case", "[HackEmulator][BasicTest]") {
     FileLoader loader;
     HackEmulator emu;
@@ -31,6 +51,31 @@ TEST_CASE("Hack Emulator runs BasicTest Test Case", "[HackEmulator][BasicTest]")
     REQUIRE(emu.peek(3012) == 42);
     REQUIRE(emu.peek(3015) == 45);
     REQUIRE(emu.peek(11) == 510);
+}
+
+TEST_CASE("Hack Emulator runs FibonacciSeries Test Case", "[HackEmulator][FibonacciSeries]") {
+    FileLoader loader;
+    HackEmulator emu;
+    
+    std::vector<int16_t> commands = loader.loadFile("../test/Emulators/HackEmulator/integration/TestCases/FibonacciSeries/FibonacciSeries.hack");
+    emu.loadProgram(commands);
+
+    emu.setRamValue(0, 256);
+    emu.setRamValue(1, 300);
+    emu.setRamValue(2, 400);
+    emu.setRamValue(400, 6);
+    emu.setRamValue(401, 3000);
+
+    for (int i = 0; i < 1100; i++) {
+        emu.executeNextInstruction();
+    }
+
+    REQUIRE(emu.peek(3000) == 0);
+    REQUIRE(emu.peek(3001) == 1);
+    REQUIRE(emu.peek(3002) == 1);
+    REQUIRE(emu.peek(3003) == 2);
+    REQUIRE(emu.peek(3004) == 3);
+    REQUIRE(emu.peek(3005) == 5);
 }
 
 TEST_CASE("Hack Emulator runs PointerTest Test Case", "[HackEmulator][PointerTest]") {
