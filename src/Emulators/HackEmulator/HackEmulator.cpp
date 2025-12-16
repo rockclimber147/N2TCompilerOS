@@ -34,7 +34,7 @@ void HackEmulator::loadProgram(const std::vector<int16_t>& instructions) {
 
 void HackEmulator::checkRamAddress(uint16_t addr) const {
     if (addr >= MEMORY_SIZE) {
-        throw std::out_of_range("Illegal memory access at " + std::to_string(addr)); 
+        throw std::out_of_range("Illegal memory access at " + std::to_string(addr) + " on line " + std::to_string(program_counter) ); 
     }
 }
 
@@ -78,8 +78,7 @@ void HackEmulator::execute(DecodedInstruction instruction) {
         a_register = instruction.addressOrValue;
         program_counter++;
     } else {
-        int16_t m_value = getM(); // Value at RAM[A]
-        int16_t alu_input_A = instruction.is_M_bit ? m_value : a_register; 
+        int16_t alu_input_A = instruction.is_M_bit ? getM() : a_register; 
         
         // 2. Compute (Requires a separate ALU function using decoded.comp_code)
         int16_t result = alu(instruction.is_M_bit, instruction.comp_code); 
