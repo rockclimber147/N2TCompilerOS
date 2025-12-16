@@ -32,12 +32,9 @@ class FullCompiler {
 private:
     CompilerConfig config_;
     
-    // VMTranslator and HackAssembler members are REMOVED!
-
-    // Helper to ensure paths end with a separator (like '/') for safety
+    static void setProjectCWD();
     std::string ensureTrailingSeparator(const std::string& path) const; 
 
-    // Execution methods will now create and run their respective tools
     void runAssembler();
     void runVMTranslator();
     void runCompiler();

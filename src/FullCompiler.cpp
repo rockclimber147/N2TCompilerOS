@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility> // For std::move
+#include <filesystem>
 
 using std::string;
 using std::cout;
@@ -18,11 +19,33 @@ std::string FullCompiler::ensureTrailingSeparator(const std::string& path) const
     return path + "/";
 }
 
+void FullCompiler::setProjectCWD() {
+    try {
+        std::filesystem::path currentExeDir = std::filesystem::current_path();
+        std::filesystem::path projectRootPath = currentExeDir; 
+        
+        if (currentExeDir.filename() == "build") {
+            projectRootPath = currentExeDir.parent_path(); 
+        } else if (currentExeDir.parent_path().filename() == "build") {
+            projectRootPath = currentExeDir.parent_path().parent_path();
+        } else {
+             projectRootPath = currentExeDir.parent_path(); 
+        }
+
+        std::filesystem::current_path(projectRootPath); 
+        cout << "CWD set to project root: " << std::filesystem::current_path().string() << endl;
+
+    } catch (const std::exception& e) {
+        cerr << "Warning: Could not set CWD. File paths may be incorrect. " << e.what() << endl;
+    }
+}
+
 // --- Constructor: Only stores config ---
 
 FullCompiler::FullCompiler(CompilerConfig config)
     : config_(std::move(config)) // Store config
 {
+    setProjectCWD();
     cout << "Compiler initialized for file: " << config_.InputFile << endl;
 }
 
