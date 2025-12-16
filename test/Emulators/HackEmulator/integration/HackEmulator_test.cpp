@@ -53,6 +53,8 @@ TEST_CASE("Hack Emulator runs BasicTest Test Case", "[HackEmulator][BasicTest]")
     REQUIRE(emu.peek(11) == 510);
 }
 
+//TODO FibonacciElement
+
 TEST_CASE("Hack Emulator runs FibonacciSeries Test Case", "[HackEmulator][FibonacciSeries]") {
     FileLoader loader;
     HackEmulator emu;
