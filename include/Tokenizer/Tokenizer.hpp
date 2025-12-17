@@ -1,3 +1,6 @@
+#ifndef TOKENIZER_HPP
+#define TOKENIZER_HPP
+
 #include <string>
 #include <memory>
 #include "Tokenizer/Token.hpp"
@@ -32,3 +35,5 @@ public:
     Token peek();
     std::string getCurrentLineContent();
 };
+
+#endif

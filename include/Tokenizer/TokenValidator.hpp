@@ -1,3 +1,6 @@
+#ifndef TOKEN_VALIDATOR_HPP
+#define TOKEN_VALIDATOR_HPP
+
 #include <string>
 #include <initializer_list>
 #include <algorithm>
@@ -23,3 +26,5 @@ public:
 
     void throwTokenError(Token token, std::string message);
 };
+
+#endif

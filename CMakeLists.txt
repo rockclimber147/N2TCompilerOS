@@ -16,6 +16,7 @@ set(TOKENIZER_SOURCES
     src/Tokenizer/TokenTypes.cpp
     src/Tokenizer/Tokenizer.cpp
     src/Tokenizer/Token.cpp
+    src/Tokenizer/TokenValidator.cpp
 )
 
 set(ASSEMBLER_SOURCES
@@ -35,6 +36,7 @@ set(VMTRANSLATOR_SOURCES
 
 set(JACKCOMPILER_SOURCES
     src/JackCompiler/JackSpec.cpp
+    src/JackCompiler/JackParser.cpp
 )
 
 # Define all source files for the application
