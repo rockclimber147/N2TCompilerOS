@@ -20,12 +20,13 @@ private:
     void parseSubroutineBody(std::vector<VariableIR>& locals, 
                              std::vector<std::unique_ptr<StatementIR>>& statements);
     std::vector<VariableIR> parseVarDec();
-    // std::unique_ptr<StatementIR> parseStatement();
-    // std::unique_ptr<StatementIR> parseLetStatement();
-    // std::unique_ptr<StatementIR> parseIfStatement();
-    // std::unique_ptr<StatementIR> parseWhileStatement();
-    // std::unique_ptr<StatementIR> parseDoStatement();
-    // std::unique_ptr<StatementIR> parseReturnStatement();
+    std::vector<std::unique_ptr<StatementIR>> parseStatements();
+    std::unique_ptr<StatementIR> parseStatement();
+    std::unique_ptr<StatementIR> parseLetStatement();
+    std::unique_ptr<StatementIR> parseIfStatement();
+    std::unique_ptr<StatementIR> parseWhileStatement();
+    std::unique_ptr<StatementIR> parseDoStatement();
+    std::unique_ptr<StatementIR> parseReturnStatement();
     // std::unique_ptr<ExpressionIR> parseExpression();
     // std::unique_ptr<ExpressionIR> parseTerm();
     // std::unique_ptr<ExpressionIR> parseSubroutineCall(const std::string& firstTokenLexeme);
