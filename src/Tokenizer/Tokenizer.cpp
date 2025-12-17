@@ -80,7 +80,7 @@ char StreamTokenizer::curr() const {
 
 Token StreamTokenizer::scanNextToken() {
     start_ = end_;
-    // scan whitespace comments here
+    skipWhitespaceAndComments();
     start_ = end_;
 
     Token token(TokenType::ERROR, "", line_, column_);

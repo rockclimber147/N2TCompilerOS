@@ -169,6 +169,34 @@ add_test(
 )
 
 # -----------------------------------------------------------------
+# JackCompiler unit tests
+# -----------------------------------------------------------------
+
+add_executable(
+    JackCompiler_unit_tests
+    test/JackCompiler/Tokenizer_test.cpp 
+    ${TOKENIZER_SOURCES}
+    ${JACKCOMPILER_SOURCES}
+)
+
+target_include_directories(
+    JackCompiler_unit_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    JackCompiler_unit_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain # This single target handles both headers and main() function
+)
+
+add_test(
+    NAME JackCompiler_unit_tests
+    COMMAND JackCompiler_unit_tests
+)
+
+# -----------------------------------------------------------------
 # Emulator unit tests
 # -----------------------------------------------------------------
 
