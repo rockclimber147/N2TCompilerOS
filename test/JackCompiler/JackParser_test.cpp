@@ -29,6 +29,23 @@ TEST_CASE("JackParser parses empty class", "[JackParser]") {
     }
 }
 
+TEST_CASE("JackParser catches keyword issues", "[JackParser]") {
+    std::string classDec = "clas Test {}";
+    SECTION("Invalid 'class' keyword throws runtime_error") {
+        CHECK_THROWS_AS(parseToClassIR(classDec), std::runtime_error);
+    }
+
+    SECTION("Misspelled 'field' in classVarDec") {
+        std::string badField = "class T { feild boolean isOpen; }";
+        CHECK_THROWS_AS(parseToClassIR(badField), std::runtime_error);
+    }
+
+    SECTION("Misspelled subroutine type") {
+        std::string badFunc = "class T { funciton void main() {} }";
+        CHECK_THROWS_AS(parseToClassIR(badFunc), std::runtime_error);
+    }
+}
+
 TEST_CASE("JackParser parses minimal class", "[JackParser]") {
     std::string classDec = 
         "class Test {"
