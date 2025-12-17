@@ -12,6 +12,10 @@ set(EMULATOR_SOURCES
     src/Emulators/HackEmulator/HackEmulator.cpp
 )
 
+set(TOKENIZER_SOURCES
+    src/Tokenizer/TokenTypes.cpp
+)
+
 set(ASSEMBLER_SOURCES
     src/HackAssembler/AssemblyCommandParser.cpp
     src/HackAssembler/CodeTable.cpp
@@ -25,6 +29,10 @@ set(VMTRANSLATOR_SOURCES
     src/VMTranslator/VMSpecifications.cpp
     src/VMTranslator/VMCommandParser.cpp
     src/VMTranslator/VMTranslator.cpp
+)
+
+set(JACKCOMPILER_SOURCES
+    src/JackCompiler/JackSpec.cpp
 )
 
 # Define all source files for the application
@@ -49,6 +57,8 @@ add_executable(
     ${APP_SOURCES}
     ${ASSEMBLER_SOURCES}
     ${VMTRANSLATOR_SOURCES}
+    ${TOKENIZER_SOURCES}
+    ${JACKCOMPILER_SOURCES}
 )
 
 target_include_directories(
