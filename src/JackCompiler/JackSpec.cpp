@@ -58,6 +58,10 @@ const std::unordered_set<std::string> JackSpec::BINARY_OPS = {
     LESS_THAN, GREATER_THAN, EQ
 };
 
+const std::unordered_set<std::string> JackSpec::UNARY_OPS = {
+    MINUS, TILDE
+};
+
 const std::unordered_set<std::string> JackSpec::KEYWORD_CONSTANTS = {
     TRUE, FALSE, NULL_KEYWORD, THIS
 };

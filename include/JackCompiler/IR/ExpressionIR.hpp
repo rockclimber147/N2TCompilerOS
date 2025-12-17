@@ -60,9 +60,12 @@ struct SubroutineCallIR : public ExpressionIR {
     int line;
     int column;
 
-    SubroutineCallIR(Token t, std::string method, std::vector<std::unique_ptr<ExpressionIR>> args)
-        : target(t.lexeme), methodName(std::move(method)), arguments(std::move(args)), 
-          line(t.line), column(t.col) {}
+    SubroutineCallIR(Token t, std::string target, std::string method, std::vector<std::unique_ptr<ExpressionIR>> args)
+        : target(std::move(target)), 
+        methodName(std::move(method)), 
+        arguments(std::move(args)), 
+        line(t.line), 
+        column(t.col) {}
 };
 
 #endif

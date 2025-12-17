@@ -68,6 +68,7 @@ public:
     {}
 
     static const std::unordered_set<std::string> BINARY_OPS;
+    static const std::unordered_set<std::string> UNARY_OPS;
     static const std::unordered_set<std::string> KEYWORD_CONSTANTS;
 
 private:

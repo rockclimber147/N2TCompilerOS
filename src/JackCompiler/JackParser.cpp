@@ -215,11 +215,8 @@ std::unique_ptr<StatementIR> JackParser::parseLetStatement() {
     }
 
     validator_.expectSpecific(JackSpec::EQ);
-
     std::unique_ptr<ExpressionIR> assignmentExpression = parseExpression();
-
     validator_.expectSpecific(JackSpec::SEMICOLON);
-
     return std::make_unique<LetStatementIR>(varName, std::move(indexExpression), std::move(assignmentExpression));
 }
 
@@ -260,7 +257,8 @@ std::unique_ptr<StatementIR> JackParser::parseWhileStatement() {
 
 std::unique_ptr<StatementIR> JackParser::parseDoStatement() {
     validator_.expectSpecific(JackSpec::DO);
-    std::unique_ptr<ExpressionIR> expression = parseExpression();
+    Token idToken = validator_.expectType(TokenType::IDENTIFIER);
+    std::unique_ptr<ExpressionIR> expression = parseSubroutineCall(idToken);
     validator_.expectSpecific(JackSpec::SEMICOLON);
     return std::make_unique<DoStatementIR>(std::move(expression));
 }
@@ -294,12 +292,23 @@ std::unique_ptr<ExpressionIR> JackParser::parseExpression() {
 }
 
 std::unique_ptr<ExpressionIR> JackParser::parseTerm() {
-    // Grammar handles: integerConstant, stringConstant, keywordConstant, 
-    // varName, varName '[' expression ']', subroutineCall, 
-    // '(' expression ')', unaryOp term
-    
     Token next = validator_.peekNext();
-if (next.type == TokenType::INTEGER_LITERAL) {
+
+    if (next.lexeme == JackSpec::L_PAREN) {
+        validator_.expectSpecific(JackSpec::L_PAREN);
+        auto expression = parseExpression(); 
+        validator_.expectSpecific(JackSpec::R_PAREN); 
+        return expression;
+    }
+
+    if (JackSpec::UNARY_OPS.count(next.lexeme) > 0) {
+        Token unaryOpToken = validator_.expectOneOfLexemes(JackSpec::UNARY_OPS);
+        auto operand = parseTerm(); 
+        
+        return std::make_unique<UnaryTermIR>(unaryOpToken.lexeme, std::move(operand));
+    }
+
+    if (next.type == TokenType::INTEGER_LITERAL) {
         Token t = validator_.expectType(TokenType::INTEGER_LITERAL);
         return std::make_unique<IntegerLiteralIR>(std::stoi(t.lexeme));
         
@@ -316,34 +325,52 @@ if (next.type == TokenType::INTEGER_LITERAL) {
         std::string lookahead = validator_.peekNext().lexeme;
 
         if (lookahead == JackSpec::L_SQUARE_BRACKET) {
-            // Array access: varName '[' expression ']'
             validator_.expectSpecific(JackSpec::L_SQUARE_BRACKET);
             auto indexExpr = parseExpression();
             validator_.expectSpecific(JackSpec::R_SQUARE_BRACKET);
             return std::make_unique<VariableTermIR>(idToken, std::move(indexExpr));
             
         } else if (lookahead == JackSpec::L_PAREN || lookahead == JackSpec::DOT) {
-            // Subroutine call: func() or Math.sqrt()
             return parseSubroutineCall(idToken);
             
         } else {
-            // Simple variable
             return std::make_unique<VariableTermIR>(idToken, nullptr);
         }
     }
-    return nullptr;
+    validator_.throwTokenError(next, "Expected a constant, identifier, unary op, or '('");
 }
 
-std::unique_ptr<ExpressionIR> JackParser::parseSubroutineCall(const Token& firstTokenLexeme) {
-    // Grammar: subroutineName '(' expressionList ')' | 
-    // (className | varName) '.' subroutineName '(' expressionList ')'
-    
-    return nullptr;
+std::unique_ptr<ExpressionIR> JackParser::parseSubroutineCall(const Token& firstToken) {
+    std::string target = firstToken.lexeme;
+    std::string method = "";
+
+    if (validator_.peekNext().lexeme == JackSpec::DOT) {
+        validator_.expectSpecific(JackSpec::DOT);
+        method = validator_.expectType(TokenType::IDENTIFIER).lexeme;
+    } else {
+        method = target;
+        target = JackSpec::THIS; 
+    }
+
+    validator_.expectSpecific(JackSpec::L_PAREN);
+    std::vector<std::unique_ptr<ExpressionIR>> args = parseExpressionList();
+    validator_.expectSpecific(JackSpec::R_PAREN);
+
+    return std::make_unique<SubroutineCallIR>(firstToken, target, method, std::move(args));
 }
 
 std::vector<std::unique_ptr<ExpressionIR>> JackParser::parseExpressionList() {
-    // Grammar: (expression (',' expression)* )?
     std::vector<std::unique_ptr<ExpressionIR>> expressions;
+
+    if (validator_.peekNext().lexeme == JackSpec::R_PAREN) {
+        return expressions;
+    }
+
+    expressions.push_back(parseExpression());
+    while (validator_.peekNext().lexeme == JackSpec::COMMA) {
+        validator_.expectSpecific(JackSpec::COMMA);
+        expressions.push_back(parseExpression());
+    }
 
     return expressions;
 }
