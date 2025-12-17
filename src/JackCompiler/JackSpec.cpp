@@ -51,9 +51,16 @@ const std::string JackSpec::GREATER_THAN    = ">";
 const std::string JackSpec::EQ              = "=";
 const std::string JackSpec::TILDE           = "~"; // Unary Not
 
-// --- II. PRIVATE STATIC SETS Initialization ---
-// These use the newly defined public constant strings
-// and are used to initialize the base TokenizerSpec.
+
+const std::unordered_set<std::string> JackSpec::BINARY_OPS = {
+    PLUS, MINUS, MULTIPLY, DIVIDE, 
+    AMPERSAND, PIPE, 
+    LESS_THAN, GREATER_THAN, EQ
+};
+
+const std::unordered_set<std::string> JackSpec::KEYWORD_CONSTANTS = {
+    TRUE, FALSE, NULL_KEYWORD, THIS
+};
 
 const std::unordered_set<std::string> JackSpec::JACK_KEYWORDS_SET = {
     JackSpec::CLASS, JackSpec::CONSTRUCTOR, JackSpec::FUNCTION, JackSpec::METHOD, 

@@ -19,10 +19,14 @@ public:
     Token expectSpecific(const std::string& lexeme);
 
     Token expectOneOfLexemes(std::initializer_list<std::string> expectedLexemes);
+    Token expectOneOfLexemes(const std::unordered_set<std::string>& expectedLexemes);
 
     Token expectOneOfTypes(std::initializer_list<TokenType> expectedTypes);
+    Token expectOneOfTypes(const std::unordered_set<TokenType>& expectedTypes);
     
-    std::string formatExpected(std::initializer_list<std::string> expected) const;
+
+    template <typename T>
+    std::string formatCollection(const T& collection) const;
 
     [[noreturn]] void throwTokenError(Token token, std::string message);
 };

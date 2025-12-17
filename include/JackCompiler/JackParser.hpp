@@ -29,7 +29,7 @@ private:
     std::unique_ptr<StatementIR> parseReturnStatement();
     std::unique_ptr<ExpressionIR> parseExpression();
     std::unique_ptr<ExpressionIR> parseTerm();
-    std::unique_ptr<ExpressionIR> parseSubroutineCall(const std::string& firstTokenLexeme);
+    std::unique_ptr<ExpressionIR> parseSubroutineCall(const Token& firstTokenLexeme);
     std::vector<std::unique_ptr<ExpressionIR>> parseExpressionList();
     std::string parseType();
 };

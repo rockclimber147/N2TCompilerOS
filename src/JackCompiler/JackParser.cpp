@@ -277,9 +277,20 @@ std::unique_ptr<StatementIR> JackParser::parseReturnStatement() {
 }
 
 std::unique_ptr<ExpressionIR> JackParser::parseExpression() {
-    auto leftTerm = parseTerm();
-    
-    return leftTerm; 
+    auto currentExpr = parseTerm();
+
+    while (JackSpec::BINARY_OPS.count(validator_.peekNext().lexeme) > 0) {
+        Token opToken = validator_.expectOneOfLexemes(JackSpec::BINARY_OPS); 
+        
+        auto nextTerm = parseTerm();
+        currentExpr = std::make_unique<BinaryExpressionIR>(
+            std::move(currentExpr), 
+            opToken.lexeme, 
+            std::move(nextTerm)
+        );
+    }
+
+    return currentExpr; 
 }
 
 std::unique_ptr<ExpressionIR> JackParser::parseTerm() {
@@ -288,11 +299,42 @@ std::unique_ptr<ExpressionIR> JackParser::parseTerm() {
     // '(' expression ')', unaryOp term
     
     Token next = validator_.peekNext();
+if (next.type == TokenType::INTEGER_LITERAL) {
+        Token t = validator_.expectType(TokenType::INTEGER_LITERAL);
+        return std::make_unique<IntegerLiteralIR>(std::stoi(t.lexeme));
+        
+    } else if (next.type == TokenType::STRING_LITERAL) {
+        Token t = validator_.expectType(TokenType::STRING_LITERAL);
+        return std::make_unique<StringLiteralIR>(t.lexeme);
+        
+    } else if (JackSpec::KEYWORD_CONSTANTS.count(next.lexeme) > 0) {
+        Token t = validator_.expectOneOfLexemes(JackSpec::KEYWORD_CONSTANTS);
+        return std::make_unique<KeywordLiteralIR>(t.lexeme);
+        
+    } else if (next.type == TokenType::IDENTIFIER) {
+        Token idToken = validator_.expectType(TokenType::IDENTIFIER);
+        std::string lookahead = validator_.peekNext().lexeme;
 
+        if (lookahead == JackSpec::L_SQUARE_BRACKET) {
+            // Array access: varName '[' expression ']'
+            validator_.expectSpecific(JackSpec::L_SQUARE_BRACKET);
+            auto indexExpr = parseExpression();
+            validator_.expectSpecific(JackSpec::R_SQUARE_BRACKET);
+            return std::make_unique<VariableTermIR>(idToken, std::move(indexExpr));
+            
+        } else if (lookahead == JackSpec::L_PAREN || lookahead == JackSpec::DOT) {
+            // Subroutine call: func() or Math.sqrt()
+            return parseSubroutineCall(idToken);
+            
+        } else {
+            // Simple variable
+            return std::make_unique<VariableTermIR>(idToken, nullptr);
+        }
+    }
     return nullptr;
 }
 
-std::unique_ptr<ExpressionIR> JackParser::parseSubroutineCall(const std::string& firstTokenLexeme) {
+std::unique_ptr<ExpressionIR> JackParser::parseSubroutineCall(const Token& firstTokenLexeme) {
     // Grammar: subroutineName '(' expressionList ')' | 
     // (className | varName) '.' subroutineName '(' expressionList ')'
     

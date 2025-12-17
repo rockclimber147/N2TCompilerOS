@@ -67,9 +67,10 @@ public:
         ) 
     {}
 
+    static const std::unordered_set<std::string> BINARY_OPS;
+    static const std::unordered_set<std::string> KEYWORD_CONSTANTS;
+
 private:
-    // --- PRIVATE STATIC SETS (Used for Tokenizer initialization) ---
-    // These sets hold the strings used by the TokenizerSpec's lookup methods.
     static const std::unordered_set<std::string> JACK_KEYWORDS_SET;
     static const std::unordered_set<std::string> JACK_SYMBOLS_SET;
 };

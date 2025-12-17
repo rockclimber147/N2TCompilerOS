@@ -29,55 +29,50 @@ Token TokenValidator::expectSpecific(const std::string& lexeme) { // Changed arg
                            "', but found '" + token.lexeme + "' (" + tokenTypeToString(token.type) + ").");
 }
 
-Token TokenValidator::expectOneOfLexemes(std::initializer_list<std::string> expectedLexemes) {
-    Token token = tokenizer_.advance();
-    auto it = std::find(expectedLexemes.begin(), expectedLexemes.end(), token.lexeme);
-
-    if (it == expectedLexemes.end()) {
-        throwTokenError(
-            token,
-            "Expected one of the lexemes " + formatExpected(expectedLexemes) + 
-            ", but found '" + token.lexeme + "'."
-        );
-    }
-    return token;
-}
-
-Token TokenValidator::expectOneOfTypes(std::initializer_list<TokenType> expectedTypes) {
-    Token token = tokenizer_.advance();
-    bool typeMatch = false;
-
-    for (TokenType expectedType : expectedTypes) {
-        if (token.type == expectedType) {
-            typeMatch = true;
-            break;
-        }
-    }
-
-    if (!typeMatch) {
-        throwTokenError(
-            token,
-            "Found token '" + token.lexeme + "' (" + tokenTypeToString(token.type) + 
-            "), but expected one of the specified types."
-        );
-    }
-    return token;
-}
-
-std::string TokenValidator::formatExpected(std::initializer_list<std::string> expected) const {
+template <typename T>
+std::string TokenValidator::formatCollection(const T& collection) const {
     std::ostringstream oss;
     oss << "{";
     bool first = true;
-    for (const auto& item : expected) {
-        if (!first) {
-            oss << ", ";
-        }
+    for (const auto& item : collection) {
+        if (!first) oss << ", ";
         oss << "'" << item << "'";
         first = false;
     }
     oss << "}";
     return oss.str();
 }
+
+
+Token TokenValidator::expectOneOfLexemes(const std::unordered_set<std::string>& expected) {
+    Token t = tokenizer_.advance();
+    if (expected.find(t.lexeme) == expected.end()) 
+        throwTokenError(t, "Expected one of " + formatCollection(expected) + ", found '" + t.lexeme + "'");
+    return t;
+}
+
+Token TokenValidator::expectOneOfLexemes(std::initializer_list<std::string> expected) {
+    Token t = tokenizer_.advance();
+    if (std::find(expected.begin(), expected.end(), t.lexeme) == expected.end())
+        throwTokenError(t, "Expected one of " + formatCollection(expected) + ", found '" + t.lexeme + "'");
+    return t;
+}
+
+
+Token TokenValidator::expectOneOfTypes(const std::unordered_set<TokenType>& expected) {
+    Token t = tokenizer_.advance();
+    if (expected.find(t.type) == expected.end())
+        throwTokenError(t, "Expected different type, found '" + t.lexeme + "' (" + tokenTypeToString(t.type) + ")");
+    return t;
+}
+
+Token TokenValidator::expectOneOfTypes(std::initializer_list<TokenType> expected) {
+    Token t = tokenizer_.advance();
+    if (std::find(expected.begin(), expected.end(), t.type) == expected.end())
+        throwTokenError(t, "Expected different type, found '" + t.lexeme + "' (" + tokenTypeToString(t.type) + ")");
+    return t;
+}
+
 
 [[noreturn]] void TokenValidator::throwTokenError(Token token, std::string message) {
     message = "\n[L" + std::to_string(token.line) + ":C" + std::to_string(token.col) + "] Parse Error: " + message +

@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+#include "Tokenizer/Token.hpp"
+
 struct ExpressionIR {
     virtual ~ExpressionIR() = default;
 };
@@ -37,8 +39,11 @@ struct KeywordLiteralIR : public ExpressionIR {
 struct VariableTermIR : public ExpressionIR {
     std::string name;
     std::unique_ptr<ExpressionIR> arrayIndex;
-    VariableTermIR(std::string n, std::unique_ptr<ExpressionIR> idx = nullptr) 
-        : name(std::move(n)), arrayIndex(std::move(idx)) {}
+    int line;
+    int column;
+
+    VariableTermIR(Token t, std::unique_ptr<ExpressionIR> idx = nullptr) 
+        : name(t.lexeme), arrayIndex(std::move(idx)), line(t.line), column(t.col) {}
 };
 
 struct UnaryTermIR : public ExpressionIR {
@@ -52,9 +57,12 @@ struct SubroutineCallIR : public ExpressionIR {
     std::string target;
     std::string methodName;
     std::vector<std::unique_ptr<ExpressionIR>> arguments;
+    int line;
+    int column;
 
-    SubroutineCallIR(std::string tgt, std::string method, std::vector<std::unique_ptr<ExpressionIR>> args)
-        : target(std::move(tgt)), methodName(std::move(method)), arguments(std::move(args)) {}
+    SubroutineCallIR(Token t, std::string method, std::vector<std::unique_ptr<ExpressionIR>> args)
+        : target(t.lexeme), methodName(std::move(method)), arguments(std::move(args)), 
+          line(t.line), column(t.col) {}
 };
 
 #endif
