@@ -111,7 +111,7 @@ TEST_CASE("JackTokenizer: 5. Whitespace and Comments", "[JackCompiler][Skip]") {
     REQUIRE(t.advance().type == TokenType::EOF_TYPE);
 }
 
-TEST_CASE("JackTokenizer: 7. Error Cases", "[JackCompiler][Errors]") {
+TEST_CASE("JackTokenizer: 6. Error Cases", "[JackCompiler][Errors]") {
     std::string error_str = R"("unterminated string)";
     JackSpec const jack_spec{};
     StreamTokenizer t_str(error_str, jack_spec);
