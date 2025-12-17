@@ -129,8 +129,9 @@ SubroutineIR JackParser::parseSubroutineDec() {
     // Call parseParameterList(parameters) -> (Placeholder function)
     validator_.expectSpecific(JackSpec::R_PAREN);
 
+    validator_.expectSpecific(JackSpec::L_CURLY_BRACKET);
     // Call parseSubroutineBody(locals, statements) -> (Placeholder function)
-
+    validator_.expectSpecific(JackSpec::R_CURLY_BRACKET);
     return SubroutineIR(type, subroutineReturnType, subroutineIdentifierToken.lexeme);
 }
 
