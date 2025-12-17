@@ -7,6 +7,28 @@
 #include "JackCompiler/JackParser.hpp"
 #include "JackCompiler/IR/HighLevelIR.hpp"
 
+ClassIR parseToClassIR(const std::string& content) {
+    JackSpec spec;
+    StreamTokenizer t(content, spec);
+    TokenValidator val(t);
+    JackParser p(val);
+    
+    return p.parseClass();
+}
+
+
+
+TEST_CASE("JackParser parses empty class", "[JackParser]") {
+    std::string classDec = "class Test {}";
+    ClassIR classIR = parseToClassIR(classDec);
+
+    SECTION("Class metadata is correct") {
+        CHECK(classIR.name == "Test");
+        CHECK(classIR.classVariables.size() == 0);
+        CHECK(classIR.subroutines.size() == 0);
+    }
+}
+
 TEST_CASE("JackParser parses minimal class", "[JackParser]") {
     std::string classDec = 
         "class Test {"
@@ -18,14 +40,7 @@ TEST_CASE("JackParser parses minimal class", "[JackParser]") {
         "    }"
         "}";
 
-    // Setup dependencies
-    JackSpec spec;
-    StreamTokenizer t(classDec, spec);
-    TokenValidator val(t);
-    JackParser p(val);
-
-    // Act
-    ClassIR classIR = p.parseClass();
+    ClassIR classIR = parseToClassIR(classDec);
 
     SECTION("Class metadata is correct") {
         CHECK(classIR.name == "Test");
@@ -68,12 +83,7 @@ TEST_CASE("JackParser handles multiple variables on one line", "[JackParser]") {
         "    static int x, y, z;"
         "}";
 
-    JackSpec spec;
-    StreamTokenizer t(classDec, spec);
-    TokenValidator val(t);
-    JackParser p(val);
-
-    ClassIR classIR = p.parseClass();
+    ClassIR classIR = parseToClassIR(classDec);
 
     REQUIRE(classIR.classVariables.size() == 3);
     CHECK(classIR.classVariables[0].name == "x");
