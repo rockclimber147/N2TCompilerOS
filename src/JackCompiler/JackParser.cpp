@@ -82,39 +82,56 @@ std::string JackParser::parseType() {
 
     validator_.throwTokenError(t, "Expected a type (int, char, boolean, or class identifier), but found '" + 
                              t.lexeme + "'");
-    return "";
 }
 
 std::vector<VariableIR> JackParser::parseVarDec() {
-    // This is very similar to parseClassVarDec, but always uses VarKind::VAR
+    std::vector<VariableIR> vars = {};
+
+    Token kindToken = validator_.expectSpecific(JackSpec::VAR);
+    VarKind kind = VarKind::VAR;
+
+    std::string varType = parseType();
+    Token varName = validator_.expectType(TokenType::IDENTIFIER);
     
-    // 1. Consume 'var'
-    
-    // 2. Call parseType()
-    
-    // 3. Loop: Consume varName (IDENTIFIER) and optional ','
-    
-    // 4. Consume ';'
-    
-    return {}; // Placeholder
+    vars.emplace_back(kind, varType, varName.lexeme);
+
+    while (validator_.peekNext().lexeme == JackSpec::COMMA) {
+        validator_.expectSpecific(JackSpec::COMMA);
+        varName = validator_.expectType(TokenType::IDENTIFIER);
+        vars.emplace_back(kind, varType, varName.lexeme);
+    }
+
+    validator_.expectSpecific(JackSpec::SEMICOLON);   
+    return std::move(vars);
 }
 
 SubroutineIR JackParser::parseSubroutineDec() {
-    // 1. Consume subroutine type keyword and determine SubroutineType
+    Token subroutineKindToken = validator_.expectOneOfLexemes({
+            JackSpec::CONSTRUCTOR, 
+            JackSpec::FUNCTION, 
+            JackSpec::METHOD
+        });
+    SubroutineType type;
+    if (subroutineKindToken.lexeme == JackSpec::CONSTRUCTOR)  type = SubroutineType::CONSTRUCTOR;
+    else if (subroutineKindToken.lexeme == JackSpec::FUNCTION)  type = SubroutineType::FUNCTION;
+    else if (subroutineKindToken.lexeme == JackSpec::METHOD)  type = SubroutineType::METHOD;
 
-    // 2. Consume return type ('void' or call parseType())
+    std::string subroutineReturnType;
+    if (validator_.peekNext().lexeme == JackSpec::VOID) {
+        subroutineReturnType = validator_.expectSpecific(JackSpec::VOID).lexeme;
+    } else {
+        subroutineReturnType = parseType();
+    }
 
-    // 3. Consume subroutineName (IDENTIFIER)
+    Token subroutineIdentifierToken = validator_.expectType(TokenType::IDENTIFIER);
 
-    // 4. Consume '('
-    // 5. Call parseParameterList(parameters) -> (Placeholder function)
-    // 6. Consume ')'
+    validator_.expectSpecific(JackSpec::L_PAREN);
+    // Call parseParameterList(parameters) -> (Placeholder function)
+    validator_.expectSpecific(JackSpec::R_PAREN);
 
-    // 7. Call parseSubroutineBody(locals, statements) -> (Placeholder function)
+    // Call parseSubroutineBody(locals, statements) -> (Placeholder function)
 
-    // 8. Assemble and return SubroutineIR
-
-    return SubroutineIR(SubroutineType::FUNCTION, "void", ""); // Placeholder
+    return SubroutineIR(type, subroutineReturnType, subroutineIdentifierToken.lexeme);
 }
 
 
