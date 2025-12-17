@@ -79,7 +79,7 @@ std::string TokenValidator::formatExpected(std::initializer_list<std::string> ex
     return oss.str();
 }
 
-void TokenValidator::throwTokenError(Token token, std::string message) {
+[[noreturn]] void TokenValidator::throwTokenError(Token token, std::string message) {
     message = "\n[L" + std::to_string(token.line) + ":C" + std::to_string(token.col) + "] Parse Error: " + message +
               "\n\n" + tokenizer_.getCurrentLineContent() +
               "\n" + std::string(token.col - 1, ' ') + std::string(token.lexeme.length(), '^') +

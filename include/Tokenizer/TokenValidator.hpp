@@ -24,7 +24,7 @@ public:
     
     std::string formatExpected(std::initializer_list<std::string> expected) const;
 
-    void throwTokenError(Token token, std::string message);
+    [[noreturn]] void throwTokenError(Token token, std::string message);
 };
 
 #endif
