@@ -5,6 +5,7 @@
 #include "Tokenizer/TokenValidator.hpp"
 #include "JackCompiler/IR/HighLevelIR.hpp"
 #include "JackCompiler/IR/StatementIR.hpp"
+#include "JackCompiler/IR/ExpressionIR.hpp"
 
 #include <algorithm>
 #include <stdexcept>

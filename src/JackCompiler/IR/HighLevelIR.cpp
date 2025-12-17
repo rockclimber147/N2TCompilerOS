@@ -1,5 +1,6 @@
 #include "JackCompiler/IR/HighLevelIR.hpp"
 #include "JackCompiler/IR/StatementIR.hpp"
+#include "JackCompiler/IR/ExpressionIR.hpp"
 
 SubroutineIR::SubroutineIR(SubroutineType t, std::string retType, std::string n)
     : type(t), returnType(std::move(retType)), name(std::move(n)) {}
