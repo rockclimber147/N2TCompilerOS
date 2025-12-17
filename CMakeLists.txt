@@ -178,7 +178,8 @@ add_test(
 add_executable(
     JackCompiler_unit_tests
     test/JackCompiler/Tokenizer_test.cpp 
-    test/JackCompiler/JackParser_test.cpp
+    test/JackCompiler/JackParserClassVarDec_test.cpp
+    test/JackCompiler/JackParserStatements_test.cpp
     ${TOKENIZER_SOURCES}
     ${JACKCOMPILER_SOURCES}
 )

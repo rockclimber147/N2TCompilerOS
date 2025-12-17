@@ -210,13 +210,13 @@ std::unique_ptr<StatementIR> JackParser::parseLetStatement() {
 
     if (validator_.peekNext().lexeme == JackSpec::L_SQUARE_BRACKET) {
         validator_.expectSpecific(JackSpec::L_SQUARE_BRACKET);
-        indexExpression = nullptr;
+        indexExpression = parseExpression();
         validator_.expectSpecific(JackSpec::R_SQUARE_BRACKET);
     }
 
     validator_.expectSpecific(JackSpec::EQ);
 
-    std::unique_ptr<ExpressionIR> assignmentExpression = nullptr;
+    std::unique_ptr<ExpressionIR> assignmentExpression = parseExpression();
 
     validator_.expectSpecific(JackSpec::SEMICOLON);
 
@@ -226,7 +226,7 @@ std::unique_ptr<StatementIR> JackParser::parseLetStatement() {
 std::unique_ptr<StatementIR> JackParser::parseIfStatement() {
     validator_.expectSpecific(JackSpec::IF);
     validator_.expectSpecific(JackSpec::L_PAREN);
-    std::unique_ptr<ExpressionIR> condition = nullptr;
+    std::unique_ptr<ExpressionIR> condition = parseExpression();
     validator_.expectSpecific(JackSpec::R_PAREN);
 
     validator_.expectSpecific(JackSpec::L_CURLY_BRACKET);
@@ -247,7 +247,7 @@ std::unique_ptr<StatementIR> JackParser::parseIfStatement() {
 std::unique_ptr<StatementIR> JackParser::parseWhileStatement() {
     validator_.expectSpecific(JackSpec::WHILE);
     validator_.expectSpecific(JackSpec::L_PAREN);
-    std::unique_ptr<ExpressionIR> condition = nullptr;
+    std::unique_ptr<ExpressionIR> condition = parseExpression();
     validator_.expectSpecific(JackSpec::R_PAREN);
 
     validator_.expectSpecific(JackSpec::L_CURLY_BRACKET);
@@ -260,7 +260,7 @@ std::unique_ptr<StatementIR> JackParser::parseWhileStatement() {
 
 std::unique_ptr<StatementIR> JackParser::parseDoStatement() {
     validator_.expectSpecific(JackSpec::DO);
-    std::unique_ptr<ExpressionIR> expression = nullptr;
+    std::unique_ptr<ExpressionIR> expression = parseExpression();
     validator_.expectSpecific(JackSpec::SEMICOLON);
     return std::make_unique<DoStatementIR>(std::move(expression));
 }
@@ -268,6 +268,15 @@ std::unique_ptr<StatementIR> JackParser::parseDoStatement() {
 std::unique_ptr<StatementIR> JackParser::parseReturnStatement() {
     validator_.expectSpecific(JackSpec::RETURN);
     std::unique_ptr<ExpressionIR> expression = nullptr;
+    if (validator_.peekNext().lexeme != JackSpec::SEMICOLON) {
+        expression = parseExpression();
+    }
+
     validator_.expectSpecific(JackSpec::SEMICOLON);
     return std::make_unique<ReturnStatementIR>(std::move(expression));
+}
+
+std::unique_ptr<ExpressionIR> JackParser::parseExpression() {
+    validator_.expectOneOfTypes({TokenType::KEYWORD, TokenType::IDENTIFIER});
+    return nullptr;
 }

@@ -7,7 +7,7 @@
 #include "JackCompiler/JackParser.hpp"
 #include "JackCompiler/IR/HighLevelIR.hpp"
 
-ClassIR parseToClassIR(const std::string& content) {
+inline ClassIR parseToClassIR(const std::string& content) {
     JackSpec spec;
     StreamTokenizer t(content, spec);
     TokenValidator val(t);
