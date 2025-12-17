@@ -37,6 +37,7 @@ set(VMTRANSLATOR_SOURCES
 set(JACKCOMPILER_SOURCES
     src/JackCompiler/JackSpec.cpp
     src/JackCompiler/JackParser.cpp
+    src/JackCompiler/IR/HighLevelIR.cpp
 )
 
 # Define all source files for the application

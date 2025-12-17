@@ -3,6 +3,8 @@
 #include "Tokenizer/TokenTypes.hpp"
 #include "Tokenizer/Token.hpp"
 #include "Tokenizer/TokenValidator.hpp"
+#include "JackCompiler/IR/HighLevelIR.hpp"
+#include "JackCompiler/IR/StatementIR.hpp"
 
 #include <algorithm>
 #include <stdexcept>
@@ -124,32 +126,49 @@ SubroutineIR JackParser::parseSubroutineDec() {
     }
 
     Token subroutineIdentifierToken = validator_.expectType(TokenType::IDENTIFIER);
+    SubroutineIR currentSubroutine(type, subroutineReturnType, subroutineIdentifierToken.lexeme);
 
     validator_.expectSpecific(JackSpec::L_PAREN);
-    // Call parseParameterList(parameters) -> (Placeholder function)
+    parseParameterList(currentSubroutine.parameters);
     validator_.expectSpecific(JackSpec::R_PAREN);
 
-    validator_.expectSpecific(JackSpec::L_CURLY_BRACKET);
-    // Call parseSubroutineBody(locals, statements) -> (Placeholder function)
-    validator_.expectSpecific(JackSpec::R_CURLY_BRACKET);
-    return SubroutineIR(type, subroutineReturnType, subroutineIdentifierToken.lexeme);
+    parseSubroutineBody(currentSubroutine.locals, currentSubroutine.bodyStatements);
+
+    return currentSubroutine;
 }
 
 
 // --- Remaining required Subroutine Detail Parsers (Stubs) ---
 
-// void JackParser::parseParameterList(std::vector<VariableIR>& parameters) {
-//     // Corresponds to 'parameterList': ((type varName) (',' type varName)*)?
-    
-//     // This will be implemented when we tackle arguments.
-//     // Hint: The tokens will be VarKind::ARG
-// }
+void JackParser::parseParameterList(std::vector<VariableIR>& parameters) {
+    if (validator_.peekNext().lexeme == JackSpec::R_PAREN) {
+        return;
+    }
+    std::string type = parseType();
+    Token name = validator_.expectType(TokenType::IDENTIFIER);
+    parameters.emplace_back(VarKind::ARG, type, name.lexeme);
 
-// void JackParser::parseSubroutineBody(std::vector<VariableIR>& locals, 
-//                                      std::vector<std::unique_ptr<StatementIR>>& statements) {
-//     // Corresponds to 'subroutineBody': '{' varDec* statements '}'
+    while (validator_.peekNext().lexeme == JackSpec::COMMA) {
+        validator_.expectSpecific(JackSpec::COMMA);
+        type = parseType();
+        name = validator_.expectType(TokenType::IDENTIFIER);
+        parameters.emplace_back(VarKind::ARG, type, name.lexeme);
+    }
+}
 
-//     // This will be implemented when we tackle statements.
-// }
+void JackParser::parseSubroutineBody(std::vector<VariableIR>& locals, 
+                                     std::vector<std::unique_ptr<StatementIR>>& statements) {
+    validator_.expectSpecific(JackSpec::L_CURLY_BRACKET);
 
-// All other parsing methods (statements, expressions, terms) will be added later.
+    while (validator_.peekNext().lexeme == JackSpec::VAR) {
+        std::vector<VariableIR> nextLine = parseVarDec();
+        
+        locals.insert(locals.end(), 
+                      std::make_move_iterator(nextLine.begin()), 
+                      std::make_move_iterator(nextLine.end()));
+    }
+
+    // TODO: Parse statements (will fill 'statements' vector later)
+
+    validator_.expectSpecific(JackSpec::R_CURLY_BRACKET);
+}

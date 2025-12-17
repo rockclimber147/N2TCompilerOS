@@ -111,3 +111,83 @@ TEST_CASE("JackParser handles multiple variables on one line", "[JackParser]") {
         CHECK(v.kind == VarKind::STATIC);
     }
 }
+
+TEST_CASE("JackParser catches subroutine body errors", "[JackParser]") {
+    SECTION("Missing comma in parameter list") {
+        std::string badParams = "class T { method void m(int x int y) {} }";
+        CHECK_THROWS_AS(parseToClassIR(badParams), std::runtime_error);
+    }
+
+    SECTION("Missing semicolon in var declaration") {
+        std::string badVar = "class T { function void f() { var int x } }";
+        CHECK_THROWS_AS(parseToClassIR(badVar), std::runtime_error);
+    }
+}
+
+TEST_CASE("JackParser handles subroutine parameters", "[JackParser]") {
+    std::string classDec = 
+        "class ParamTest {"
+        "    method void update(int x, boolean state, MyClass obj) {"
+        "    }"
+        "}";
+
+    ClassIR classIR = parseToClassIR(classDec);
+    REQUIRE(classIR.subroutines.size() == 1);
+    const auto& sub = classIR.subroutines[0];
+
+    SECTION("Parameter count and metadata") {
+        REQUIRE(sub.parameters.size() == 3);
+        
+        CHECK(sub.parameters[0].name == "x");
+        CHECK(sub.parameters[0].type == "int");
+        CHECK(sub.parameters[0].kind == VarKind::ARG);
+
+        CHECK(sub.parameters[1].name == "state");
+        CHECK(sub.parameters[1].type == "boolean");
+        CHECK(sub.parameters[1].kind == VarKind::ARG);
+
+        CHECK(sub.parameters[2].name == "obj");
+        CHECK(sub.parameters[2].type == "MyClass");
+        CHECK(sub.parameters[2].kind == VarKind::ARG);
+    }
+}
+
+TEST_CASE("JackParser handles complex subroutine bodies", "[JackParser]") {
+    std::string classDec = 
+        "class BodyTest {"
+        "    function int compute() {"
+        "        var int i, j;"
+        "        var char key;"
+        "        var Array arr;"
+        "    }"
+        "}";
+
+    ClassIR classIR = parseToClassIR(classDec);
+    REQUIRE(classIR.subroutines.size() == 1);
+    const auto& sub = classIR.subroutines[0];
+
+    SECTION("Local variables are correctly aggregated") {
+        // We expect 4 total variables from 3 'var' lines
+        REQUIRE(sub.locals.size() == 4);
+
+        // First var line: var int i, j;
+        CHECK(sub.locals[0].name == "i");
+        CHECK(sub.locals[0].type == "int");
+        CHECK(sub.locals[1].name == "j");
+        CHECK(sub.locals[1].type == "int");
+
+        // Second var line: var char key;
+        CHECK(sub.locals[2].name == "key");
+        CHECK(sub.locals[2].type == "char");
+
+        // Third var line: var Array arr;
+        CHECK(sub.locals[3].name == "arr");
+        CHECK(sub.locals[3].type == "Array");
+
+        // All should be VarKind::VAR
+        for(const auto& v : sub.locals) {
+            CHECK(v.kind == VarKind::VAR);
+        }
+    }
+}
+

@@ -43,10 +43,15 @@ struct SubroutineIR {
 
     std::vector<VariableIR> parameters; 
     std::vector<VariableIR> locals;     
-    // std::vector<std::unique_ptr<StatementIR>> bodyStatements; 
+    std::vector<std::unique_ptr<StatementIR>> bodyStatements; 
 
-    SubroutineIR(SubroutineType t, std::string retType, std::string n)
-        : type(t), returnType(std::move(retType)), name(std::move(n)) {}
+    SubroutineIR(SubroutineType t, std::string retType, std::string n);
+    ~SubroutineIR();
+    SubroutineIR(SubroutineIR&&) noexcept;
+    SubroutineIR& operator=(SubroutineIR&&) noexcept;
+    SubroutineIR(const SubroutineIR&) = delete;
+    SubroutineIR& operator=(const SubroutineIR&) = delete;
+
 };
 
 // --- 3. Class Declaration (The Root) ---
