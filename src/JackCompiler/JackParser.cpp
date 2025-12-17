@@ -277,6 +277,31 @@ std::unique_ptr<StatementIR> JackParser::parseReturnStatement() {
 }
 
 std::unique_ptr<ExpressionIR> JackParser::parseExpression() {
-    validator_.expectOneOfTypes({TokenType::KEYWORD, TokenType::IDENTIFIER});
+    auto leftTerm = parseTerm();
+    
+    return leftTerm; 
+}
+
+std::unique_ptr<ExpressionIR> JackParser::parseTerm() {
+    // Grammar handles: integerConstant, stringConstant, keywordConstant, 
+    // varName, varName '[' expression ']', subroutineCall, 
+    // '(' expression ')', unaryOp term
+    
+    Token next = validator_.peekNext();
+
     return nullptr;
+}
+
+std::unique_ptr<ExpressionIR> JackParser::parseSubroutineCall(const std::string& firstTokenLexeme) {
+    // Grammar: subroutineName '(' expressionList ')' | 
+    // (className | varName) '.' subroutineName '(' expressionList ')'
+    
+    return nullptr;
+}
+
+std::vector<std::unique_ptr<ExpressionIR>> JackParser::parseExpressionList() {
+    // Grammar: (expression (',' expression)* )?
+    std::vector<std::unique_ptr<ExpressionIR>> expressions;
+
+    return expressions;
 }
