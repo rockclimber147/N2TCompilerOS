@@ -14,6 +14,7 @@ set(EMULATOR_SOURCES
 
 set(TOKENIZER_SOURCES
     src/Tokenizer/TokenTypes.cpp
+    src/Tokenizer/Tokenizer.cpp
     src/Tokenizer/Token.cpp
 )
 
