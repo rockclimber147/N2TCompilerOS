@@ -35,6 +35,16 @@ void CodeGenerator::writeExpression(const ExpressionIR* expr, const ClassEntry* 
         vmWriter.writePush(Segment::CONST, intLit->value);
     }
 
+    else if (auto strLit = dynamic_cast<const StringLiteralIR*>(expr)) {
+        const std::string& str = strLit->value;
+        vmWriter.writePush(Segment::CONST, str.length());
+        vmWriter.writeCall("String.new", 1);
+        for (char c : str) {
+            vmWriter.writePush(Segment::CONST, static_cast<int>(c));
+            vmWriter.writeCall("String.appendChar", 2);
+        }
+    }
+
     else if (auto keyLit = dynamic_cast<const KeywordLiteralIR*>(expr)) {
         if (keyLit->keyword == JackSpec::TRUE) {
             vmWriter.writePush(Segment::CONST, 0);
@@ -71,6 +81,15 @@ void CodeGenerator::writeExpression(const ExpressionIR* expr, const ClassEntry* 
         else if (binOp->op == "=") vmWriter.writeArithmetic("eq");
         else if (binOp->op == "&") vmWriter.writeArithmetic("and");
         else if (binOp->op == "|") vmWriter.writeArithmetic("or");
+        
+    } else if (auto unaryOp = dynamic_cast<const UnaryTermIR*>(expr)) {
+        writeExpression(unaryOp->term.get(), cls, sub);
+
+        if (unaryOp->op == "-") {
+            vmWriter.writeArithmetic("neg");
+        } else if (unaryOp->op == "~") {
+            vmWriter.writeArithmetic("not");
+        }
     }
 
     // 5. Subroutine Calls
@@ -103,9 +122,9 @@ void CodeGenerator::writeStatement(const StatementIR* stmt, const ClassEntry* cl
     }
 
     else if (auto ifStmt = dynamic_cast<const IfStatementIR*>(stmt)) {
-        std::string trueLabel = generateLabel("IF_TRUE");
-        std::string falseLabel = generateLabel("IF_FALSE");
-        std::string endLabel = generateLabel("IF_END");
+        std::string trueLabel = generateLabel(cls->className + ".IF_TRUE");
+        std::string falseLabel = generateLabel(cls->className + ".IF_FALSE");
+        std::string endLabel = generateLabel(cls->className + ".IF_END");
 
         writeExpression(ifStmt->condition.get(), cls, sub);
         vmWriter.writeIf(trueLabel);
@@ -125,8 +144,8 @@ void CodeGenerator::writeStatement(const StatementIR* stmt, const ClassEntry* cl
     }
 
     else if (auto whileStmt = dynamic_cast<const WhileStatementIR*>(stmt)) {
-        std::string continueLabel = generateLabel("WHILE_EXP");
-        std::string endLabel = generateLabel("WHILE_END");
+        std::string continueLabel = generateLabel(cls->className + ".WHILE_EXP");
+        std::string endLabel = generateLabel(cls->className + ".WHILE_END");
 
         vmWriter.writeLabel(continueLabel);
         writeExpression(whileStmt->condition.get(), cls, sub);
