@@ -1,7 +1,4 @@
-#include <string>
-
 #include "JackCompiler/VMWriter.hpp"
-#include "JackCompiler/Commontypes.hpp"
 
 VMWriter::VMWriter(const std::string& fileName) {
     outFile.open(fileName);
@@ -21,22 +18,26 @@ void VMWriter::close() {
     outFile.close();
 }
 
-std::string VMWriter::kindToSegment(VarKind kind) {
-    switch (kind) {
-        case VarKind::STATIC: return "static";
-        case VarKind::FIELD:  return "this";
-        case VarKind::ARG:    return "argument";
-        case VarKind::VAR:    return "local";
-        default: return "unknown";
+std::string VMWriter::segToString(Segment seg) {
+    switch (seg) {
+        case Segment::CONST:   return "constant";
+        case Segment::ARG:     return "argument";
+        case Segment::LOCAL:   return "local";
+        case Segment::STATIC:  return "static";
+        case Segment::THIS:    return "this";
+        case Segment::THAT:    return "that";
+        case Segment::POINTER: return "pointer";
+        case Segment::TEMP:    return "temp";
+        default:               return "unknown";
     }
 }
 
-void VMWriter::writePush(VarKind kind, int index) {
-    outFile << padding << "push " << kindToSegment(kind) << " " << index << "\n";
+void VMWriter::writePush(Segment seg, int index) {
+    outFile << padding << "push " << segToString(seg) << " " << index << "\n";
 }
 
-void VMWriter::writePop(VarKind kind, int index) {
-    outFile << padding << "pop " << kindToSegment(kind) << " " << index << "\n";
+void VMWriter::writePop(Segment seg, int index) {
+    outFile << padding << "pop " << segToString(seg) << " " << index << "\n";
 }
 
 void VMWriter::writeArithmetic(const std::string& command) {

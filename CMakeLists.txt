@@ -40,6 +40,7 @@ set(JACKCOMPILER_SOURCES
     src/JackCompiler/IR/HighLevelIR.cpp
     src/JackCompiler/SemanticAnalyzer.cpp
     src/JackCompiler/VMWriter.cpp
+    src/JackCompiler/CodeGenerator.cpp
 )
 
 # Define all source files for the application

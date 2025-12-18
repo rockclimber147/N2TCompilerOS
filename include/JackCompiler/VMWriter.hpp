@@ -6,13 +6,24 @@
 #include <iostream>
 #include "JackCompiler/Commontypes.hpp"
 
+enum class Segment {
+    CONST,
+    ARG,
+    LOCAL,
+    STATIC,
+    THIS,
+    THAT,
+    POINTER,
+    TEMP
+};
+
 class VMWriter {
 public:
     explicit VMWriter(const std::string& fileName);
     ~VMWriter();
 
-    void writePush(VarKind kind, int index);
-    void writePop(VarKind kind, int index);
+    void writePush(Segment seg, int index);
+    void writePop(Segment seg, int index);
     void writeArithmetic(const std::string& command);
     
     void writeLabel(const std::string& label);
@@ -29,7 +40,7 @@ public:
 private:
     std::ofstream outFile;
     const std::string padding = "    ";
-
+    std::string segToString(Segment seg);
     std::string kindToSegment(VarKind kind);
 };
 
