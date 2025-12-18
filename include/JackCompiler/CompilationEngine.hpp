@@ -13,7 +13,8 @@ class CompilationEngine {
 public:
 explicit CompilationEngine(const std::string& inputPathStr, 
                                const std::string& outputDir, 
-                               bool debugMode = false);
+                               bool debugMode = false,
+                               bool analyzeSemantics = false);
     
     void compile();
 
@@ -23,6 +24,7 @@ private:
 
     std::string outputDir_;
     bool debugMode_;
+    bool validateSemantics_;
     std::vector<fs::path> jackFilePaths_;
     ProjectSymbolTable globalTable_;
 };

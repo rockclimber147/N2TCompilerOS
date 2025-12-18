@@ -38,7 +38,6 @@ void StreamTokenizer::loadFromFile(const std::string& filePath) {
         throw std::runtime_error("Could not open file: " + filePath);
     }
 
-    // Efficiently read file into string
     std::ostringstream ss;
     ss << file.rdbuf();
     load(ss.str());

@@ -10,8 +10,9 @@
 
 CompilationEngine::CompilationEngine(const std::string& inputPathStr, 
                                      const std::string& outputDir, 
-                                     bool debugMode)
-    : outputDir_(outputDir), debugMode_(debugMode) 
+                                     bool debugMode,
+                                     bool validateSemantics)
+    : outputDir_(outputDir), debugMode_(debugMode) , validateSemantics_(validateSemantics)
 {
     fs::path inputPath(inputPathStr);
     collectJackFiles(inputPath);
@@ -58,12 +59,15 @@ void CompilationEngine::compile() {
     // --- Pass 2: Semantic Analysis ---
     debugPrint("Starting Semantic Analysis Pass...");
     SemanticAnalyzer analyzer(globalTable_);
-    analyzer.analyze(projectASTs);
+    analyzer.performSkeletonPass(projectASTs);
+    if (validateSemantics_) {
+        analyzer.performValidationPass(projectASTs);
+    }
 
     // --- Pass 3: Code Generation ---
     debugPrint("Starting Code Generation Pass...");
     for (const auto& classAST : projectASTs) {
-        std::string outPath = (fs::path(classAST.name + ".vm")).string();
+        std::string outPath = (fs::path(outputDir_ + classAST.name + ".vm")).string();
         
         debugPrint("Generating: " + outPath);
         VMWriter writer(outPath);

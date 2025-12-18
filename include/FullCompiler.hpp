@@ -25,6 +25,7 @@ struct CompilerConfig {
 
     bool JackDebug = false;
     bool JackCompilerGenerateXML = false;
+    bool JackValidateSemantics = false;
     bool VMDebug = false;
     bool HackAssemblerDebug = false;
     bool HackAssemblerGenerateListing = false;
@@ -46,4 +47,4 @@ public:
     void run();
 };
 
-#endif // FULLCOMPILER_HPP
+#endif

@@ -22,12 +22,12 @@ int main(int argc, char* argv[]) {
 
         config.VMTranslatorOutputDir = "asm/"; 
         config.HackAssemblerOutputDir = "hack/"; 
-        config.JackCompilerOutputDir = "Jack/";
+        config.JackCompilerOutputDir = "vm/";
 
         config.HackAssemblerDebug = false;
         config.HackAssemblerGenerateListing = true;
         config.VMDebug = false;
-        config.JackDebug = false;
+        config.JackDebug = true;
         config.JackCompilerGenerateXML = false;
 
         cout << "\n--- Starting Full Compilation: " << FILENAME << " ---" << endl;

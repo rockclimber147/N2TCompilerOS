@@ -11,12 +11,11 @@ public:
         performValidationPass(projectASTs);
     }
 
-private:
-    ProjectSymbolTable& symbolTable;
-
     void performSkeletonPass(const std::vector<ClassIR>& asts);
     void performValidationPass(const std::vector<ClassIR>& asts);
 
+private:
+    ProjectSymbolTable& symbolTable;
     void validateStatement(StatementIR* stmt, ClassEntry* cls, SubroutineEntry* sub);
     void validateExpression(ExpressionIR* expr, ClassEntry* cls, SubroutineEntry* sub);
     void validateVariable(VariableTermIR* var, ClassEntry* cls, SubroutineEntry* sub);

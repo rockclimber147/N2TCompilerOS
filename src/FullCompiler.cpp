@@ -104,7 +104,7 @@ cout << "--- Starting Jack Compilation (.jack -> .vm) ---" << endl;
 
     try {
         // Initialize the engine with the path and debug setting
-        CompilationEngine jackEngine(inputPath, jackOutputDir, config_.JackDebug);
+        CompilationEngine jackEngine(inputPath, jackOutputDir, config_.JackDebug, config_.JackValidateSemantics);
         jackEngine.compile();
     } catch (const std::exception& e) {
         throw std::runtime_error("Jack Compiler Error: " + std::string(e.what()));
