@@ -62,6 +62,10 @@ void SemanticAnalyzer::validateStatement(StatementIR* stmt, ClassEntry* cls, Sub
             throw std::runtime_error("Undeclared variable: " + letStmt->varName);
         }
 
+        if (sub->routineType == SubroutineType::FUNCTION && var->kind == VarKind::FIELD) {
+            throw std::runtime_error( "Line " + std::to_string(letStmt->line) + "Cannot assign to field '" + letStmt->varName + "' from a static function.");
+        }
+
         if (letStmt->indexExpression) {
             validateExpression(letStmt->indexExpression.get(), cls, sub);
         }

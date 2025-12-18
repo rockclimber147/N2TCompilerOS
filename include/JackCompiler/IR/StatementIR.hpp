@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+#include "Tokenizer/Token.hpp"
+
 struct ExpressionIR;
 
 struct StatementIR {
@@ -13,13 +15,15 @@ struct StatementIR {
 
 struct LetStatementIR : public StatementIR {
     std::string varName;
+    int line;
+    int col;
     std::unique_ptr<ExpressionIR> indexExpression;
     std::unique_ptr<ExpressionIR> assignedExpression;
 
-    LetStatementIR(std::string name, 
+    LetStatementIR(Token t, 
                    std::unique_ptr<ExpressionIR> idx, 
                    std::unique_ptr<ExpressionIR> expr)
-        : varName(std::move(name)), indexExpression(std::move(idx)), assignedExpression(std::move(expr)) {}
+        : varName(std::move(t.lexeme)), line(t.line), col(t.col), indexExpression(std::move(idx)), assignedExpression(std::move(expr)) {}
 };
 
 struct IfStatementIR : public StatementIR {

@@ -182,6 +182,7 @@ add_executable(
     test/JackCompiler/JackParserClassVarDec_test.cpp
     test/JackCompiler/JackParserStatements_test.cpp
     test/JackCompiler/JackParserExpressionTerm_test.cpp
+    test/JackCompiler/SemanticAnalyzer_test.cpp
     ${TOKENIZER_SOURCES}
     ${JACKCOMPILER_SOURCES}
 )
