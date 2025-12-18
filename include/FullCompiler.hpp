@@ -25,7 +25,7 @@ struct CompilerConfig {
 
     bool JackDebug = false;
     bool JackCompilerGenerateXML = false;
-    bool JackValidateSemantics = true;
+    bool JackValidateSemantics = false;
     bool VMDebug = false;
     bool HackAssemblerDebug = false;
     bool HackAssemblerGenerateListing = false;

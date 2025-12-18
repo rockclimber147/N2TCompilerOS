@@ -29,8 +29,6 @@ int main(int argc, char* argv[]) {
                 config.JackDebug = true;
                 config.VMDebug = true;
                 config.HackAssemblerDebug = true;
-            } else if (arg == "--no-validate") {
-                config.JackValidateSemantics = false;
             } else if (arg == "--validate" || arg == "-v") {
                 config.JackValidateSemantics = true;
             } else if (arg == "--listing" || arg == "-l") {
