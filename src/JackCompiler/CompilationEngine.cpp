@@ -8,14 +8,21 @@
 #include "Tokenizer/TokenValidator.hpp"
 #include <iostream>
 
-CompilationEngine::CompilationEngine(const std::string& inputPathStr, bool debugMode)
-    : debugMode_(debugMode) 
+CompilationEngine::CompilationEngine(const std::string& inputPathStr, 
+                                     const std::string& outputDir, 
+                                     bool debugMode)
+    : outputDir_(outputDir), debugMode_(debugMode) 
 {
     fs::path inputPath(inputPathStr);
     collectJackFiles(inputPath);
 
     if (jackFilePaths_.empty()) {
-        throw std::runtime_error("No .jack files found in: " + inputPathStr);
+        throw std::runtime_error("JackCompiler: No .jack files found in: " + inputPathStr);
+    }
+    
+    // Ensure the output directory exists
+    if (!fs::exists(outputDir_)) {
+        fs::create_directories(outputDir_);
     }
 }
 
@@ -41,7 +48,8 @@ void CompilationEngine::compile() {
     debugPrint("Starting Parsing Pass...");
     for (const auto& path : jackFilePaths_) {
         debugPrint("Parsing: " + path.filename().string());
-        StreamTokenizer st(path.string(), spec);
+        StreamTokenizer st(spec);
+        st.loadFromFile(path.string());
         TokenValidator validator(st);
         JackParser parser(validator);
         projectASTs.push_back(parser.parseClass());
@@ -55,8 +63,6 @@ void CompilationEngine::compile() {
     // --- Pass 3: Code Generation ---
     debugPrint("Starting Code Generation Pass...");
     for (const auto& classAST : projectASTs) {
-        // Output file is always [ClassName].vm in the same directory as input
-        // Note: You can modify this to support a specific output directory
         std::string outPath = (fs::path(classAST.name + ".vm")).string();
         
         debugPrint("Generating: " + outPath);

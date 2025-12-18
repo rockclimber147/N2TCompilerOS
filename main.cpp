@@ -6,7 +6,7 @@
 using namespace std;
 
 // FullCompiler sets CWD is set to the project root.
-const string FILENAME = "Sys.vm";
+const string FILENAME = "Main.jack";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 
@@ -22,10 +22,13 @@ int main(int argc, char* argv[]) {
 
         config.VMTranslatorOutputDir = "asm/"; 
         config.HackAssemblerOutputDir = "hack/"; 
+        config.JackCompilerOutputDir = "Jack/";
 
-        config.VMDebug = false;
         config.HackAssemblerDebug = false;
         config.HackAssemblerGenerateListing = true;
+        config.VMDebug = false;
+        config.JackDebug = false;
+        config.JackCompilerGenerateXML = false;
 
         cout << "\n--- Starting Full Compilation: " << FILENAME << " ---" << endl;
 

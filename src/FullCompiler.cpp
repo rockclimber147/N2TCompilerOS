@@ -49,31 +49,6 @@ FullCompiler::FullCompiler(CompilerConfig config)
     cout << "Compiler initialized for file: " << config_.InputFile << endl;
 }
 
-void FullCompiler::runVMTranslator() {
-    cout << "--- Starting VM Translation ---" << endl;
-
-    std::string asmOutputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.VMTranslatorOutputDir;
-    std::string inputPath = ensureTrailingSeparator(config_.InputFolder) + config_.InputFile;
-
-    VMTranslator translator(
-        inputPath, 
-        asmOutputDir, 
-        config_.VMDebug
-    );
-
-    translator.translate();
-    
-    cout << "VM Translation Complete. Output: " << asmOutputDir << config_.InputFile << ".asm" << endl;
-}
-
-std::string removeExtension(const std::string& filename, const std::string& ext) {
-    if (filename.length() >= ext.length() && 
-        filename.substr(filename.length() - ext.length()) == ext) {
-        return filename.substr(0, filename.length() - ext.length());
-    }
-    return filename;
-}
-
 void FullCompiler::runAssembler() {
     cout << "--- Starting Hack Assembly ---" << endl;
     
@@ -96,9 +71,46 @@ void FullCompiler::runAssembler() {
 }
 
 
+void FullCompiler::runVMTranslator() {
+    cout << "--- Starting VM Translation ---" << endl;
+
+    std::string asmOutputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.VMTranslatorOutputDir;
+    std::string inputPath = ensureTrailingSeparator(config_.InputFolder) + config_.InputFile;
+
+    VMTranslator translator(
+        inputPath, 
+        asmOutputDir, 
+        config_.VMDebug
+    );
+
+    translator.translate();
+    
+    cout << "VM Translation Complete. Output: " << asmOutputDir << config_.InputFile << ".asm" << endl;
+}
+
+std::string FullCompiler::removeExtension(const std::string& filename, const std::string& ext) {
+    if (filename.length() >= ext.length() && 
+        filename.substr(filename.length() - ext.length()) == ext) {
+        return filename.substr(0, filename.length() - ext.length());
+    }
+    return filename;
+}
+
 void FullCompiler::runCompiler() {
-    runVMTranslator();
-    runAssembler();
+cout << "--- Starting Jack Compilation (.jack -> .vm) ---" << endl;
+
+    std::string jackOutputDir = ensureTrailingSeparator(config_.RootOutputDir) + config_.JackCompilerOutputDir;
+    std::string inputPath = ensureTrailingSeparator(config_.InputFolder) + config_.InputFile;
+
+    try {
+        // Initialize the engine with the path and debug setting
+        CompilationEngine jackEngine(inputPath, jackOutputDir, config_.JackDebug);
+        jackEngine.compile();
+    } catch (const std::exception& e) {
+        throw std::runtime_error("Jack Compiler Error: " + std::string(e.what()));
+    }
+
+    cout << "Jack Compilation Complete." << endl;
 }
 
 void FullCompiler::run() {

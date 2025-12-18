@@ -7,9 +7,8 @@
 
 using namespace std;
 
-StreamTokenizer::StreamTokenizer(std::string content, const TokenizerSpec& spec)
+StreamTokenizer::StreamTokenizer(const TokenizerSpec& spec)
     : spec_(spec),
-      content_(std::move(content)),
       start_(0),
       end_(0),
       line_(1),
@@ -17,6 +16,35 @@ StreamTokenizer::StreamTokenizer(std::string content, const TokenizerSpec& spec)
       lineStart_(0)
 {
 }
+
+void StreamTokenizer::load(std::string content) {
+    content_ = std::move(content);
+    resetState();
+}
+
+void StreamTokenizer::resetState() {
+    start_ = 0;
+    end_ = 0;
+    line_ = 1;
+    column_ = 1;
+    lineStart_ = 0;
+    currentToken_ = Token(TokenType::EOF_TYPE, "");
+    nextToken_ = nullptr;
+}
+
+void StreamTokenizer::loadFromFile(const std::string& filePath) {
+    std::ifstream file(filePath, std::ios::in | std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Could not open file: " + filePath);
+    }
+
+    // Efficiently read file into string
+    std::ostringstream ss;
+    ss << file.rdbuf();
+    load(ss.str());
+}
+
+
 
 
 Token StreamTokenizer::advance() {

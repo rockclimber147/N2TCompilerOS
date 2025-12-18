@@ -11,14 +11,17 @@ namespace fs = std::filesystem;
 
 class CompilationEngine {
 public:
-    explicit CompilationEngine(const std::string& inputPathStr, bool debugMode = false);
+explicit CompilationEngine(const std::string& inputPathStr, 
+                               const std::string& outputDir, 
+                               bool debugMode = false);
     
     void compile();
 
 private:
     void collectJackFiles(const fs::path& inputPath);
     void debugPrint(const std::string& message);
-    
+
+    std::string outputDir_;
     bool debugMode_;
     std::vector<fs::path> jackFilePaths_;
     ProjectSymbolTable globalTable_;

@@ -2,9 +2,9 @@
 #define FULLCOMPILER_HPP
 
 #include <string>
-// We still need the forward declarations/includes for the private methods to work
 #include "VMTranslator/VMTranslator.hpp"
 #include "HackAssembler/HackAssembler.hpp"
+#include "JackCompiler/CompilationEngine.hpp" // Added Include
 
 enum class Command {
     COMPILE,
@@ -19,10 +19,12 @@ struct CompilerConfig {
     std::string InputFolder;
     std::string RootOutputDir;
     
-    // The relative subfolders for output
     std::string VMTranslatorOutputDir = "asm/"; 
     std::string HackAssemblerOutputDir = "hack/"; 
+    std::string JackCompilerOutputDir = "jack/";
 
+    bool JackDebug = false;
+    bool JackCompilerGenerateXML = false;
     bool VMDebug = false;
     bool HackAssemblerDebug = false;
     bool HackAssemblerGenerateListing = false;
@@ -35,10 +37,10 @@ private:
     static void setProjectCWD();
     std::string ensureTrailingSeparator(const std::string& path) const; 
 
-    void runAssembler();
     void runVMTranslator();
+    void runAssembler();
     void runCompiler();
-
+    std::string removeExtension(const std::string& filename, const std::string& ext);
 public:
     FullCompiler(CompilerConfig config); 
     void run();

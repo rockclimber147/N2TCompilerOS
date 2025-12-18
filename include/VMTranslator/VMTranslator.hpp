@@ -20,7 +20,6 @@ private:
     void debugPrint(const std::string& message); 
 
 public:
-    // Constructor now takes a path that can be a file or a folder
     VMTranslator(const std::string& inputPath, const std::string& outputDir, const bool debugMode);
     
     void translate();
