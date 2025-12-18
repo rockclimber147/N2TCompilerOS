@@ -6,6 +6,7 @@
 #include "JackCompiler/IR/HighLevelIR.hpp"
 #include "JackCompiler/IR/StatementIR.hpp"
 #include "JackCompiler/IR/ExpressionIR.hpp"
+#include "JackCompiler/Commontypes.hpp"
 
 #include <algorithm>
 #include <stdexcept>

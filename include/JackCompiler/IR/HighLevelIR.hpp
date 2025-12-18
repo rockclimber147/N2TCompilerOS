@@ -6,17 +6,12 @@
 #include <memory>
 #include <utility>
 
+#include "JackCompiler/Commontypes.hpp"
+
 // Forward declaration for the body of subroutines
 struct StatementIR;
 
 // --- 1. Variable Declarations ---
-
-enum class VarKind {
-    STATIC,
-    FIELD, // Maps to 'this' pointer in the VM
-    ARG,
-    VAR    // Local
-};
 
 struct VariableIR {
     VarKind kind;
@@ -28,12 +23,6 @@ struct VariableIR {
 };
 
 // --- 2. Subroutine Declarations ---
-
-enum class SubroutineType {
-    CONSTRUCTOR,
-    FUNCTION,
-    METHOD
-};
 
 struct SubroutineIR {
     SubroutineType type;
