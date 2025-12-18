@@ -6,7 +6,7 @@
 using namespace std;
 
 // FullCompiler sets CWD is set to the project root.
-const string FILENAME = "Main";
+const string FILENAME = "Test";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 
@@ -16,7 +16,12 @@ int main(int argc, char* argv[]) {
         CompilerConfig config;
         
         config.command = Command::COMPILE;
-        config.InputFile = FILENAME;
+
+        if (argc >= 2) {
+            config.InputFile = argv[1];
+        } else {
+            config.InputFile = FILENAME;
+        }
         config.InputFolder = INPUT_DIR;
         config.RootOutputDir = OUTPUT_DIR; 
 
@@ -30,7 +35,7 @@ int main(int argc, char* argv[]) {
         config.JackDebug = true;
         config.JackCompilerGenerateXML = false;
 
-        cout << "\n--- Starting Full Compilation: " << FILENAME << " ---" << endl;
+        cout << "\n--- Starting Full Compilation: " << config.InputFile << " ---" << endl;
 
         FullCompiler compiler(config);
         compiler.run();
