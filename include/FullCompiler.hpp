@@ -38,7 +38,7 @@ private:
     static void setProjectCWD();
     std::string ensureTrailingSeparator(const std::string& path) const; 
 
-    void runVMTranslator();
+    void runVMTranslator(const std::string& customInputPath);
     void runAssembler();
     void runCompiler();
     std::string removeExtension(const std::string& filename, const std::string& ext);

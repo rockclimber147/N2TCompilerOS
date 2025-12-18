@@ -22,8 +22,16 @@ CompilationEngine::CompilationEngine(const std::string& inputPathStr,
     }
     
     // Ensure the output directory exists
-    if (!fs::exists(outputDir_)) {
-        fs::create_directories(outputDir_);
+if (fs::is_directory(inputPath)) {
+        projectSubFolder_ = inputPath.filename().string(); 
+    } else {
+        projectSubFolder_ = ""; // Single file, no subfolder needed
+    }
+    
+    // Create the full target path
+    fs::path finalOutPath = fs::path(outputDir_) / projectSubFolder_;
+    if (!fs::exists(finalOutPath)) {
+        fs::create_directories(finalOutPath);
     }
 }
 
@@ -67,7 +75,8 @@ void CompilationEngine::compile() {
     // --- Pass 3: Code Generation ---
     debugPrint("Starting Code Generation Pass...");
     for (const auto& classAST : projectASTs) {
-        std::string outPath = (fs::path(outputDir_ + classAST.name + ".vm")).string();
+        fs::path finalDestination = fs::path(outputDir_) / projectSubFolder_ / (classAST.name + ".vm");
+        std::string outPath = finalDestination.string();
         
         debugPrint("Generating: " + outPath);
         VMWriter writer(outPath);

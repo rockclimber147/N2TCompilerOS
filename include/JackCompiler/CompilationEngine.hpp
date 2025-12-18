@@ -26,6 +26,7 @@ private:
     bool debugMode_;
     bool validateSemantics_;
     std::vector<fs::path> jackFilePaths_;
+    std::string projectSubFolder_;
     ProjectSymbolTable globalTable_;
 };
 
