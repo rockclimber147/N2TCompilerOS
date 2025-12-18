@@ -38,6 +38,7 @@ set(JACKCOMPILER_SOURCES
     src/JackCompiler/JackSpec.cpp
     src/JackCompiler/JackParser.cpp
     src/JackCompiler/IR/HighLevelIR.cpp
+    src/JackCompiler/SemanticAnalyzer.cpp
 )
 
 # Define all source files for the application
