@@ -54,6 +54,75 @@ TEST_CASE("Semantic Analyzer: Valid cross-class method call", "[semantic]") {
     SemanticAnalyzer analyzer(table);
 
     REQUIRE_NOTHROW(analyzer.analyze(project));
+
+    ClassEntry* squareEntry = table.getClass("Square");
+    REQUIRE(squareEntry != nullptr);
+    
+    // Check field 'size'
+    const VariableSymbol* sizeVar = squareEntry->lookup("size");
+    REQUIRE(sizeVar != nullptr);
+    CHECK(sizeVar->kind == VarKind::FIELD);
+    CHECK(sizeVar->index == 0);
+
+    auto it = squareEntry->subroutines.find("grow");
+    REQUIRE(it != squareEntry->subroutines.end());
+    SubroutineEntry& growSub = it->second;
+
+    // Check implicit 'this' argument for method
+    const VariableSymbol* thisArg = growSub.lookup("this", squareEntry);
+    REQUIRE(thisArg != nullptr);
+    CHECK(thisArg->kind == VarKind::ARG);
+    CHECK(thisArg->index == 0);
+
+    ClassEntry* mainEntry = table.getClass("Main");
+    SubroutineEntry& mainSub = mainEntry->subroutines.at("main");
+
+    const VariableSymbol* sVar = mainSub.lookup("s", mainEntry);
+    REQUIRE(sVar != nullptr);
+    CHECK(sVar->type == "Square");
+    CHECK(sVar->kind == VarKind::VAR);
+    CHECK(sVar->index == 0);
+}
+
+TEST_CASE("Semantic Analyzer: Verify Multiple Symbol Indices", "[semantic]") {
+    auto project = buildProject(R"(
+        class Game {
+            static int count;      // static 0
+            field int x, y;        // field 0, field 1
+            static int score;      // static 1
+
+            method void reset(int startX, int startY) { // arg 0 is 'this', 1 is startX, 2 is startY
+                var int a, b, c;   // var 0, 1, 2
+                return;
+            }
+        }
+    )");
+
+    ProjectSymbolTable table;
+    SemanticAnalyzer analyzer(table);
+    analyzer.analyze(project);
+
+    ClassEntry* cls = table.getClass("Game");
+    
+    // Verify Class Statics vs Fields
+    CHECK(cls->lookup("count")->index == 0);
+    CHECK(cls->lookup("count")->kind == VarKind::STATIC);
+    CHECK(cls->lookup("score")->index == 1);
+    CHECK(cls->lookup("score")->kind == VarKind::STATIC);
+    
+    CHECK(cls->lookup("x")->index == 0);
+    CHECK(cls->lookup("x")->kind == VarKind::FIELD);
+    CHECK(cls->lookup("y")->index == 1);
+    CHECK(cls->lookup("y")->kind == VarKind::FIELD);
+
+    // Verify Subroutine Args and Vars
+    SubroutineEntry& sub = cls->subroutines.at("reset");
+    CHECK(sub.lookup("this", cls)->index == 0);
+    CHECK(sub.lookup("startX", cls)->index == 1);
+    CHECK(sub.lookup("startY", cls)->index == 2);
+    
+    CHECK(sub.lookup("a", cls)->index == 0);
+    CHECK(sub.lookup("c", cls)->index == 2);
 }
 
 TEST_CASE("Semantic Analyzer: Catch field access in static function", "[semantic]") {
