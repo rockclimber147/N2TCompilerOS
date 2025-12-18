@@ -3,6 +3,8 @@
 
 #include <string>
 #include <memory>
+#include <fstream>
+#include <sstream>
 #include "Tokenizer/Token.hpp"
 #include "Tokenizer/TokenizerSpec.hpp"
 
@@ -21,6 +23,7 @@ private:
     Token currentToken_ = Token(TokenType::ERROR, "");
     std::unique_ptr<Token> nextToken_ = nullptr;
 
+    void resetState();
     char next();
     char curr() const;
     char peek(int offset) const;
@@ -30,10 +33,12 @@ private:
     void scanStringLiteral(Token& token);
     void skipWhitespaceAndComments();
 public:
-    StreamTokenizer(std::string content, const TokenizerSpec& spec);
+    StreamTokenizer(const TokenizerSpec& spec);
     Token advance();
     Token peek();
     std::string getCurrentLineContent();
+    void load(std::string content);
+    void loadFromFile(const std::string& filePath);
 };
 
 #endif

@@ -11,12 +11,14 @@
 
 inline ClassIR parseToClassIR(const std::string& content) {
     JackSpec spec;
-    StreamTokenizer t(content, spec);
+    StreamTokenizer t(spec);
+    t.load(content);
     TokenValidator val(t);
     JackParser p(val);
     
     return p.parseClass();
 }
+
 
 TEST_CASE("JackParser parses Return and Do statements", "[JackParser][Statement]") {
     std::string classDec = 

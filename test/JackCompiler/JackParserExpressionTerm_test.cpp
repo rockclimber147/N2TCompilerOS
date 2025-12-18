@@ -11,12 +11,14 @@
 
 inline ClassIR parseToClassIR(const std::string& content) {
     JackSpec spec;
-    StreamTokenizer t(content, spec);
+    StreamTokenizer t(spec);
+    t.load(content);
     TokenValidator val(t);
     JackParser p(val);
     
     return p.parseClass();
 }
+
 
 #include <catch2/catch_test_macros.hpp>
 #include <string>

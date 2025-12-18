@@ -33,7 +33,8 @@ TEST_CASE("JackTokenizer: 1. Symbols and EOF", "[JackCompiler][Symbols]") {
         all_symbols += symbol;
     }
     
-    StreamTokenizer t(all_symbols, jack_spec);
+    StreamTokenizer t(jack_spec);
+    t.load(all_symbols);
 
     for (const auto& symbol : SYMBOLS_LIST) {
         INFO("Testing symbol: " << symbol);
@@ -59,7 +60,8 @@ TEST_CASE("JackTokenizer: 2. Keywords", "[JackCompiler][Keywords]") {
     }
     keyword_src += " ";
 
-    StreamTokenizer t(keyword_src, jack_spec);
+    StreamTokenizer t(jack_spec);
+    t.load(keyword_src);
 
     for (const auto& keyword : ALL_JACK_KEYWORDS) {
         INFO("Testing keyword: " << keyword);
@@ -71,7 +73,9 @@ TEST_CASE("JackTokenizer: 2. Keywords", "[JackCompiler][Keywords]") {
 TEST_CASE("JackTokenizer: 3. Identifiers", "[JackCompiler][Identifiers]") {
     std::string id_src = " myClass _a123 myFunction ";
     JackSpec const jack_spec{};
-    StreamTokenizer t(id_src, jack_spec);
+    
+    StreamTokenizer t(jack_spec);
+    t.load(id_src);
 
     REQUIRE_TOKEN(t, TokenType::IDENTIFIER, "myClass");
     REQUIRE_TOKEN(t, TokenType::IDENTIFIER, "_a123");
@@ -82,12 +86,12 @@ TEST_CASE("JackTokenizer: 3. Identifiers", "[JackCompiler][Identifiers]") {
 TEST_CASE("JackTokenizer: 4. Literals", "[JackCompiler][Literals]") {
     std::string literal_src = R"( 123 "hello world" 32767 )";
     JackSpec const jack_spec{};
-    StreamTokenizer t(literal_src, jack_spec);
+    
+    StreamTokenizer t(jack_spec);
+    t.load(literal_src);
 
     REQUIRE_TOKEN(t, TokenType::INTEGER_LITERAL, "123");
-    
     REQUIRE_TOKEN(t, TokenType::STRING_LITERAL, "hello world");
-    
     REQUIRE_TOKEN(t, TokenType::INTEGER_LITERAL, "32767");
     REQUIRE(t.advance().type == TokenType::EOF_TYPE);
 }
@@ -103,7 +107,9 @@ TEST_CASE("JackTokenizer: 5. Whitespace and Comments", "[JackCompiler][Skip]") {
         + "/* adjacent block */"
         + JackSpec::WHILE;
     JackSpec const jack_spec{};
-    StreamTokenizer t(skip_src, jack_spec);
+    
+    StreamTokenizer t(jack_spec);
+    t.load(skip_src);
 
     REQUIRE_TOKEN(t, TokenType::KEYWORD, JackSpec::CLASS);
     REQUIRE_TOKEN(t, TokenType::KEYWORD, JackSpec::INT);
@@ -112,16 +118,20 @@ TEST_CASE("JackTokenizer: 5. Whitespace and Comments", "[JackCompiler][Skip]") {
 }
 
 TEST_CASE("JackTokenizer: 6. Error Cases", "[JackCompiler][Errors]") {
-    std::string error_str = R"("unterminated string)";
     JackSpec const jack_spec{};
-    StreamTokenizer t_str(error_str, jack_spec);
+    
+    std::string error_str = R"("unterminated string)";
+    StreamTokenizer t_str(jack_spec);
+    t_str.load(error_str);
     REQUIRE_THROWS_AS(t_str.advance(), std::runtime_error);
 
     std::string error_newline = "\"string\nbreak\"";
-    StreamTokenizer t_nl(error_newline, jack_spec);
+    StreamTokenizer t_nl(jack_spec);
+    t_nl.load(error_newline);
     REQUIRE_THROWS_AS(t_nl.advance(), std::runtime_error);
 
     std::string error_comment = "/* unterminated";
-    StreamTokenizer t_cmt(error_comment, jack_spec);
+    StreamTokenizer t_cmt(jack_spec);
+    t_cmt.load(error_comment);
     REQUIRE_THROWS_AS(t_cmt.advance(), std::runtime_error);
 }
