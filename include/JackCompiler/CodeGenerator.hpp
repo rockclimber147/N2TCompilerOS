@@ -16,14 +16,12 @@ public:
     CodeGenerator(ProjectSymbolTable& table, VMWriter& writer) 
         : symbolTable(table), vmWriter(writer), labelCounter(0) {}
 
-    void generate(const std::vector<ClassIR>& projectASTs);
+    void writeClass(const ClassIR& classIR);
 
 private:
     ProjectSymbolTable& symbolTable;
     VMWriter& vmWriter;
     int labelCounter;
-
-    void writeClass(const ClassIR& classIR);
     void writeSubroutine(const SubroutineIR& subIR, const ClassEntry* cls);
     
     void writeStatement(const StatementIR* stmt, const ClassEntry* cls, const SubroutineEntry* sub);

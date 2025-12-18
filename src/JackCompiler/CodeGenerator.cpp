@@ -1,12 +1,6 @@
 #include "JackCompiler/CodeGenerator.hpp"
 #include "JackCompiler/JackSpec.hpp"
 
-void CodeGenerator::generate(const std::vector<ClassIR>& projectASTs) {
-    for (const auto& classIR : projectASTs) {
-        writeClass(classIR);
-    }
-}
-
 void CodeGenerator::writeClass(const ClassIR& classIR) {
     const ClassEntry* cls = symbolTable.getClass(classIR.name);
     for (const auto& subIR : classIR.subroutines) {

@@ -41,6 +41,7 @@ set(JACKCOMPILER_SOURCES
     src/JackCompiler/SemanticAnalyzer.cpp
     src/JackCompiler/VMWriter.cpp
     src/JackCompiler/CodeGenerator.cpp
+    src/JackCompiler/CompilationEngine.cpp
 )
 
 # Define all source files for the application
