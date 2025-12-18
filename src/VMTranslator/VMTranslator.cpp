@@ -22,6 +22,12 @@ VMTranslator::VMTranslator(const string& inputPathStr, const string& outputDir, 
     if (vmFilePaths_.empty()) {
         throw std::runtime_error("VM Translator: No .vm files found in the specified path: " + inputPathStr);
     }
+
+    fs::path outPath(outputDir);
+    if (!fs::exists(outPath)) {
+        debugPrint("Creating output directory: " + outputDir);
+        fs::create_directories(outPath); 
+    }
     
     string outputBaseName;
     if (fs::is_directory(inputPath)) {

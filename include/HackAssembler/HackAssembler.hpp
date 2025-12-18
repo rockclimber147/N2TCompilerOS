@@ -2,12 +2,15 @@
 
 #include <string>
 #include <fstream>
+#include <filesystem>
 #include <memory>
 #include "parser.hpp"
 #include "HackAssembler/SymbolTable.hpp"
 #include "HackAssembler/AssemblyCommandParser.hpp" 
 #include "HackAssembler/CodeTable.hpp"
 #include "HackAssembler/ListingFileWriter.hpp"
+
+namespace fs = std::filesystem;
 
 class HackAssembler {
 public:

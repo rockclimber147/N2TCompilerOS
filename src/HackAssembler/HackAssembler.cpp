@@ -10,17 +10,28 @@ using std::string;
 using std::ofstream;
 
 HackAssembler::HackAssembler(const string& fileName, const string& inputDir, const string& outputDir, const bool debugMode, const bool generateListing)
-    : parser_(inputDir + fileName + ".asm") 
+    : parser_((fs::path(inputDir) / (fileName + ".asm")).string()),
+      debugMode_(debugMode)
 {
-    debugMode_ = debugMode;
-    string hackFilePath = outputDir + "/" + fileName + ".hack";
-    string listingFilePath = outputDir + "/" + fileName + ".listing.txt";
+    // Create the output directory if it doesn't exist
+    fs::path outPath(outputDir);
+    if (!fs::exists(outPath)) {
+        fs::create_directories(outPath);
+    }
+
+    // Use filesystem::path to join strings safely
+    string hackFilePath = (outPath / (fileName + ".hack")).string();
+    string listingFilePath = (outPath / (fileName + ".listing.txt")).string();
 
     hackWriter_.open(hackFilePath);
     listWriter_ = std::make_unique<ListingFileWriter>(listingFilePath, generateListing);
 
     if (!hackWriter_.is_open()) {
         throw std::runtime_error("Could not open output hack file at " + hackFilePath);
+    }
+    
+    if (debugMode_) {
+        std::cout << "[DEBUG] Assembler initialized. Input: " << fileName << ".asm, Output: " << hackFilePath << std::endl;
     }
 }
 
