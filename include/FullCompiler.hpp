@@ -21,11 +21,11 @@ struct CompilerConfig {
     
     std::string VMTranslatorOutputDir = "asm/"; 
     std::string HackAssemblerOutputDir = "hack/"; 
-    std::string JackCompilerOutputDir = "jack/";
+    std::string JackCompilerOutputDir = "vm/";
 
     bool JackDebug = false;
     bool JackCompilerGenerateXML = false;
-    bool JackValidateSemantics = false;
+    bool JackValidateSemantics = true;
     bool VMDebug = false;
     bool HackAssemblerDebug = false;
     bool HackAssemblerGenerateListing = false;
