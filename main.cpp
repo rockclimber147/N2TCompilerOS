@@ -10,19 +10,36 @@ const string FILENAME = "Test";
 const string INPUT_DIR = "__input__/";
 const string OUTPUT_DIR = "__output__/"; 
 
+const string usage = "usage: executable -c/-t/-a filename/folder\n";
+
 
 int main(int argc, char* argv[]) {
     try {
+        if (argc < 3) {
+            cout << usage;
+            exit(1);
+        }
+
         CompilerConfig config;
-        
-        // Default settings
-        config.command = Command::COMPILE;
+        std::string commandArg = argv[1];
+
+        if (commandArg == "-c") {
+            config.command = Command::COMPILE;
+        } else if (commandArg == "-t") {
+            config.command = Command::TRANSLATE;
+        } else if (commandArg == "-a") {
+            config.command = Command::ASSEMBLE;
+        } else {
+            cout << usage;
+            exit(1);
+        }
         config.InputFolder = INPUT_DIR;
         config.RootOutputDir = OUTPUT_DIR; 
-        config.InputFile = FILENAME;
 
-        // Argument Parsing
-        for (int i = 1; i < argc; ++i) {
+        std::string fileArg = argv[2];
+        config.InputFile = fileArg;
+
+        for (int i = 3; i < argc; ++i) {
             string arg = argv[i];
 
             if (arg == "--debug" || arg == "-d") {
@@ -38,7 +55,6 @@ int main(int argc, char* argv[]) {
             } else if (arg[0] == '-') {
                 cerr << "Unknown flag: " << arg << endl;
             } else {
-                // If it doesn't start with '-', assume it's the InputFile
                 config.InputFile = arg;
             }
         }
