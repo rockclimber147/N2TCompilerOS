@@ -80,14 +80,13 @@ void HackEmulator::execute(DecodedInstruction instruction) {
     } else {
         int16_t alu_input_A = instruction.is_M_bit ? getM() : a_register; 
         
-        // 2. Compute (Requires a separate ALU function using decoded.comp_code)
         int16_t result = alu(instruction.is_M_bit, instruction.comp_code); 
-        
+        uint16_t write_addr = a_register;
+
         if (instruction.dest_D) { d_register = result; }
         if (instruction.dest_A) { a_register = result; }
-        if (instruction.dest_M) { setRamValue(a_register, result); }
+        if (instruction.dest_M) { setRamValue(write_addr, result); }
         
-        // 4. Jump/PC Update (Based on jump flags and result condition)
         bool jump_condition_met = instruction.jump_JGT && result > 0;
         jump_condition_met  = jump_condition_met || (instruction.jump_JEQ && result == 0);
         jump_condition_met  = jump_condition_met || (instruction.jump_JLT && result < 0);
