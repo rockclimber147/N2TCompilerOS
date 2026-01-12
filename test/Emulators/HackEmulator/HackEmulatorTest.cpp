@@ -84,11 +84,12 @@ TEST_CASE("HackEmulator executes single instructions correctly", "[HackEmulator]
     REQUIRE(emu.getPC() == 1);
 
     emu.reset();
+    int16_t addr = emu.getARegister();
     emu.loadProgram(singleLineInstruction(0b1110111111111000)); // ADM = 1
     emu.executeNextInstruction();
     REQUIRE(emu.getARegister() == 1);
     REQUIRE(emu.getDRegister() == 1);
-    REQUIRE(emu.getM() == 1);
+    REQUIRE(emu.peek(addr) == 1);
     REQUIRE(emu.getPC() == 1);
 
     emu.reset();
