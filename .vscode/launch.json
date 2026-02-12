@@ -26,10 +26,21 @@
             "name": "Debug: main_app",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${command:cmake.launchTargetPath}", 
-            "args": ["test.txt"],
-            "cwd": "${workspaceFolder}", // Run from project root
-            "miDebuggerPath": "/usr/bin/gdb" // Your WSL GDB path
+            "program": "${workspaceFolder}/build/main_app", 
+            "args": ["-c", "Pong", "--listing"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}", 
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         },
         {
             "name": "Debug: assembler_unit_tests",

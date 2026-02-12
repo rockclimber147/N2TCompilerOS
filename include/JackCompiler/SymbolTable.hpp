@@ -53,6 +53,14 @@ struct ClassEntry {
         if (it != classSymbols.end()) return &it->second;
         return nullptr;
     }
+
+    void defineSubroutine(const std::string& name, SubroutineType type, const std::string& returnType = "void") {
+        SubroutineEntry entry;
+        entry.name = name;
+        entry.routineType = type;
+        entry.returnType = returnType;
+        subroutines[name] = entry;
+    }
 };
 
 inline const VariableSymbol* SubroutineEntry::lookup(const std::string& name, const ClassEntry* parentClass) const {

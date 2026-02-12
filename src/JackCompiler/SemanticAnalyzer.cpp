@@ -3,9 +3,10 @@
 #include "JackCompiler/SemanticAnalyzer.hpp"
 #include "JackCompiler/JackSpec.hpp"
 #include "JackCompiler/IR/StatementIR.hpp"
-
+#include "JackCompiler/SymbolTableBuiltInBuilder.hpp"
 
 void SemanticAnalyzer::performSkeletonPass(const std::vector<ClassIR>& asts) {
+    SymbolTableBuiltinBuilder::populate(symbolTable);
     for (const auto& classIR : asts) {
         symbolTable.addClass(classIR.name);
         ClassEntry* currentClass = symbolTable.getClass(classIR.name);

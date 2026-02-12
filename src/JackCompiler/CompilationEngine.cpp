@@ -68,9 +68,7 @@ void CompilationEngine::compile() {
     debugPrint("Starting Semantic Analysis Pass...");
     SemanticAnalyzer analyzer(globalTable_);
     analyzer.performSkeletonPass(projectASTs);
-    if (validateSemantics_) {
-        analyzer.performValidationPass(projectASTs);
-    }
+    analyzer.performValidationPass(projectASTs);
 
     // --- Pass 3: Code Generation ---
     debugPrint("Starting Code Generation Pass...");
