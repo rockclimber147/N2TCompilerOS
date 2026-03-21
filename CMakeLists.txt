@@ -7,9 +7,13 @@ project(Nand2TetrisCompiler VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(EMULATOR_SOURCES
+set(HACK_EMULATOR_SOURCES
     src/Emulators/HackEmulator/FileLoader.cpp
     src/Emulators/HackEmulator/HackEmulator.cpp
+)
+
+set(VM_EMULATOR_SOURCES
+    src/Emulators/VMEmulator/VMEmulator.cpp
 )
 
 set(TOKENIZER_SOURCES
@@ -208,14 +212,14 @@ add_test(
 )
 
 # -----------------------------------------------------------------
-# Emulator unit tests
+# HackEmulator unit tests
 # -----------------------------------------------------------------
 
 add_executable(
     HackEmulator_unit_tests
     test/Emulators/HackEmulator/FileLoaderTest.cpp 
     test/Emulators/HackEmulator/HackEmulatorTest.cpp
-    ${EMULATOR_SOURCES} 
+    ${HACK_EMULATOR_SOURCES} 
 )
 
 target_include_directories(
@@ -236,13 +240,13 @@ add_test(
 )
 
 # -----------------------------------------------------------------
-# Emulator integration tests
+# HackEmulator integration tests
 # -----------------------------------------------------------------
 
 add_executable(
     HackEmulator_integration_tests
     test/Emulators/HackEmulator/integration/HackEmulator_test.cpp
-    ${EMULATOR_SOURCES} 
+    ${HACK_EMULATOR_SOURCES} 
 )
 
 target_include_directories(
@@ -260,4 +264,31 @@ target_link_libraries(
 add_test(
     NAME HackEmulator_integration_tests
     COMMAND HackEmulator_integration_tests
+)
+
+# -----------------------------------------------------------------
+# VMEmulator unit tests
+# -----------------------------------------------------------------
+
+add_executable(
+    VMEmulator_unit_tests
+    test/Emulators/VMEmulator/PushPopArithmeticTest.cpp 
+    ${VM_EMULATOR_SOURCES} 
+)
+
+target_include_directories(
+    VMEmulator_unit_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    VMEmulator_unit_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain
+)
+
+add_test(
+    NAME VMEmulator_unit_tests
+    COMMAND VMEmulator_unit_tests
 )

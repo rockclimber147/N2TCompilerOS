@@ -23,7 +23,8 @@ enum class Segment {
     POINTER,
     THIS,
     THAT,
-    STATIC
+    STATIC,
+    TEMP
 };
 
 struct DecodedInstruction {
@@ -41,9 +42,9 @@ private:
     uint16_t program_counter = 0;
     std::unordered_map<std::string, std::function<void()>> unaryOps;
     std::unordered_map<std::string, std::function<void()>> binaryOps;
+    std::unordered_map<std::string, Segment> segmentMap;
 
     std::string fetch();
-    DecodedInstruction decode (std::string instruction);
     void execute(DecodedInstruction decoded);
     void executePush(DecodedInstruction decoded);
     void executePop(DecodedInstruction decoded);
@@ -53,6 +54,7 @@ private:
     uint16_t stackPop();
 
     void initDispatchTables();
+    void initSegmentMap();
 
 public:
     const static uint16_t RAM_BASE_ADDR    = 0;
@@ -64,10 +66,11 @@ public:
     const static uint16_t POINTER_POINTER  = 3;
     const static uint16_t THIS_POINTER     = 3;
     const static uint16_t THAT_POINTER     = 4;
-
+    
+    void loadProgram(const std::vector<std::string>& instructions);
+    DecodedInstruction decode (std::string instruction);
     void executeNextInstruction();
     int16_t peek(uint16_t addr) const;
-
 };
 
 #endif

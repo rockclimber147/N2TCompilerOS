@@ -4,6 +4,13 @@
 VMEmulator::VMEmulator() {
     ram.resize(32768, 0);
     initDispatchTables();
+    initSegmentMap();
+}
+
+void VMEmulator::loadProgram(const std::vector<std::string>& instructions) {
+    rom.clear();
+    rom = instructions;
+    program_counter = 0;
 }
 
 void VMEmulator::initDispatchTables() {
@@ -28,6 +35,17 @@ void VMEmulator::initDispatchTables() {
     };
 
     unaryOps["neg"] = [this]() { stackPush(-stackPop()); };
+}
+
+void VMEmulator::initSegmentMap() {
+    segmentMap["local"]    = Segment::LOCAL;
+    segmentMap["argument"] = Segment::ARG;
+    segmentMap["this"]     = Segment::THIS;
+    segmentMap["that"]     = Segment::THAT;
+    segmentMap["constant"] = Segment::CONSTANT;
+    segmentMap["static"]   = Segment::STATIC;
+    segmentMap["pointer"]  = Segment::POINTER;
+    segmentMap["temp"]     = Segment::TEMP;
 }
 
 void VMEmulator::executeNextInstruction() {
@@ -55,7 +73,11 @@ DecodedInstruction VMEmulator::decode(std::string instruction) {
         decoded.type = (firstWord == "push") ? InstructionType::PUSH : InstructionType::POP;
         std::string segStr;
         ss >> segStr >> decoded.value;
-        // logic to map segStr to Segment enum...
+        if (segmentMap.find(segStr) != segmentMap.end()) {
+            decoded.segment = segmentMap[segStr];
+        } else {
+            throw std::runtime_error("Unknown segment: " + segStr);
+        }
     } else {
         if (binaryOps.find(firstWord) != binaryOps.end()) {
             decoded.type = InstructionType::BINARY_ARITHMETIC;
@@ -78,15 +100,41 @@ void VMEmulator::execute(DecodedInstruction decoded) {
 }
 
 void VMEmulator::executePush(DecodedInstruction decoded) {
-    // 1. Calculate source address based on segment + value
-    // 2. Read value from RAM
-    // 3. stackPush(val)
+    int16_t valueToPush = 0;
+
+    switch (decoded.segment) {
+        case Segment::CONSTANT: valueToPush = decoded.value; break;
+        case Segment::LOCAL:    valueToPush = ram[ram[LCL_POINTER] + decoded.value]; break;
+        case Segment::ARG:      valueToPush = ram[ram[ARG_POINTER] + decoded.value]; break;
+        case Segment::THIS:     valueToPush = ram[ram[THIS_POINTER] + decoded.value]; break;
+        case Segment::THAT:     valueToPush = ram[ram[THAT_POINTER] + decoded.value]; break;
+        case Segment::POINTER:  valueToPush = ram[POINTER_POINTER + decoded.value]; break;
+        case Segment::TEMP:     valueToPush = ram[5 + decoded.value]; break;
+        case Segment::STATIC:   valueToPush = ram[STATIC_BASE_ADDR + decoded.value]; break;
+
+        default: throw std::runtime_error("Unknown segment for push");
+    }
+
+    stackPush(valueToPush);
 }
 
 void VMEmulator::executePop(DecodedInstruction decoded) {
-    // 1. val = stackPop()
-    // 2. Calculate target address based on segment + value
-    // 3. ram[target] = val
+    int16_t val = stackPop();
+    uint16_t targetAddr = 0;
+
+    switch (decoded.segment) {
+        case Segment::CONSTANT: throw std::runtime_error("Cannot pop into constant segment");
+        case Segment::LOCAL:    targetAddr = ram[LCL_POINTER] + decoded.value; break;
+        case Segment::ARG:      targetAddr = ram[ARG_POINTER] + decoded.value; break;
+        case Segment::THIS:     targetAddr = ram[THIS_POINTER] + decoded.value; break;
+        case Segment::THAT:     targetAddr = ram[THAT_POINTER] + decoded.value; break;
+        case Segment::POINTER:  targetAddr = POINTER_POINTER + decoded.value; break;
+        case Segment::TEMP:     targetAddr = 5 + decoded.value; break; 
+        case Segment::STATIC:   targetAddr = STATIC_BASE_ADDR + decoded.value; break;
+
+        default: throw std::runtime_error("Unknown segment for pop");
+    }
+    ram[targetAddr] = val;
 }
 
 void VMEmulator::executeBinaryArithmetic(DecodedInstruction decoded) {
