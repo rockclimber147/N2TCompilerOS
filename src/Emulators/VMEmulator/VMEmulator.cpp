@@ -27,7 +27,9 @@ void VMEmulator::initDispatchTables() {
     addComp("gt", [](int16_t a, int16_t b) { return a > b; });
     addComp("lt", [](int16_t a, int16_t b) { return a < b; });
 
-    binaryOps["add"] = [this]() { stackPush(stackPop() + stackPop()); }; 
+    binaryOps["add"] = [this]() { stackPush(stackPop() + stackPop()); };
+    binaryOps["and"] = [this]() { stackPush(stackPop() & stackPop()); };
+    binaryOps["or"]  = [this]() { stackPush(stackPop() | stackPop()); };
     
     binaryOps["sub"] = [this]() { 
         int16_t y = stackPop(); 
@@ -36,6 +38,7 @@ void VMEmulator::initDispatchTables() {
     };
 
     unaryOps["neg"] = [this]() { stackPush(-stackPop()); };
+    unaryOps["not"] = [this]() { stackPush(~stackPop()); };
 }
 
 void VMEmulator::initSegmentMap() {
