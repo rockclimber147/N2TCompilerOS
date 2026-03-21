@@ -272,7 +272,8 @@ add_test(
 
 add_executable(
     VMEmulator_unit_tests
-    test/Emulators/VMEmulator/PushPopArithmeticTest.cpp 
+    test/Emulators/VMEmulator/PushPopArithmeticTest.cpp
+    test/Emulators/VMEmulator/DecodeTest.cpp 
     ${VM_EMULATOR_SOURCES} 
 )
 
