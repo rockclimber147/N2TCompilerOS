@@ -66,6 +66,7 @@ public:
     const static uint16_t POINTER_POINTER  = 3;
     const static uint16_t THIS_POINTER     = 3;
     const static uint16_t THAT_POINTER     = 4;
+    const static uint16_t TEMP_POINTER     = 5;
 
     VMEmulator();
     
@@ -74,6 +75,29 @@ public:
     void executeNextInstruction();
     int16_t peek(uint16_t addr) const;
     int16_t peekStack();
+    void poke(uint16_t addr, int16_t value);
+
+    int16_t peekLocal(uint16_t i) const    { return ram[ram[LCL_POINTER] + i]; }
+    void pokeLocal(uint16_t i, int16_t v)  { ram[ram[LCL_POINTER] + i] = v; }
+
+    int16_t peekArgument(uint16_t i) const { return ram[ram[ARG_POINTER] + i]; }
+    void pokeArgument(uint16_t i, int16_t v) { ram[ram[ARG_POINTER] + i] = v; }
+
+    int16_t peekThis(uint16_t i) const     { return ram[ram[THIS_POINTER] + i]; }
+    void pokeThis(uint16_t i, int16_t v)   { ram[ram[THIS_POINTER] + i] = v; }
+
+    int16_t peekThat(uint16_t i) const     { return ram[ram[THAT_POINTER] + i]; }
+    void pokeThat(uint16_t i, int16_t v)   { ram[ram[THAT_POINTER] + i] = v; }
+
+    // Fixed-Mapping Segments
+    int16_t peekTemp(uint16_t i) const     { return ram[TEMP_POINTER + i]; }
+    void pokeTemp(uint16_t i, int16_t v)   { ram[TEMP_POINTER + i] = v; }
+
+    int16_t peekPointer(uint16_t i) const  { return ram[POINTER_POINTER + i]; }
+    void pokePointer(uint16_t i, int16_t v) { ram[POINTER_POINTER + i] = v; }
+
+    int16_t peekStatic(uint16_t i) const   { return ram[STATIC_BASE_ADDR + i]; }
+    void pokeStatic(uint16_t i, int16_t v) { ram[STATIC_BASE_ADDR + i] = v; }
 };
 
 #endif

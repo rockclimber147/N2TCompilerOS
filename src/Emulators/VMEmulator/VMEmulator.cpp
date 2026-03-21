@@ -108,13 +108,13 @@ void VMEmulator::executePush(DecodedInstruction decoded) {
 
     switch (decoded.segment) {
         case Segment::CONSTANT: valueToPush = decoded.value; break;
-        case Segment::LOCAL:    valueToPush = ram[ram[LCL_POINTER] + decoded.value]; break;
-        case Segment::ARG:      valueToPush = ram[ram[ARG_POINTER] + decoded.value]; break;
-        case Segment::THIS:     valueToPush = ram[ram[THIS_POINTER] + decoded.value]; break;
-        case Segment::THAT:     valueToPush = ram[ram[THAT_POINTER] + decoded.value]; break;
-        case Segment::POINTER:  valueToPush = ram[POINTER_POINTER + decoded.value]; break;
-        case Segment::TEMP:     valueToPush = ram[5 + decoded.value]; break;
-        case Segment::STATIC:   valueToPush = ram[STATIC_BASE_ADDR + decoded.value]; break;
+        case Segment::LOCAL:    valueToPush = peekLocal(decoded.value); break;
+        case Segment::ARG:      valueToPush = peekArgument(decoded.value); break;
+        case Segment::THIS:     valueToPush = peekThis(decoded.value); break;
+        case Segment::THAT:     valueToPush = peekThat(decoded.value); break;
+        case Segment::POINTER:  valueToPush = peekPointer(decoded.value); break;
+        case Segment::TEMP:     valueToPush = peekTemp(decoded.value); break;
+        case Segment::STATIC:   valueToPush = peekStatic(decoded.value); break;
 
         default: throw std::runtime_error("Unknown segment for push");
     }
@@ -124,21 +124,21 @@ void VMEmulator::executePush(DecodedInstruction decoded) {
 
 void VMEmulator::executePop(DecodedInstruction decoded) {
     int16_t val = stackPop();
-    uint16_t targetAddr = 0;
 
     switch (decoded.segment) {
-        case Segment::CONSTANT: throw std::runtime_error("Cannot pop into constant segment");
-        case Segment::LOCAL:    targetAddr = ram[LCL_POINTER] + decoded.value; break;
-        case Segment::ARG:      targetAddr = ram[ARG_POINTER] + decoded.value; break;
-        case Segment::THIS:     targetAddr = ram[THIS_POINTER] + decoded.value; break;
-        case Segment::THAT:     targetAddr = ram[THAT_POINTER] + decoded.value; break;
-        case Segment::POINTER:  targetAddr = POINTER_POINTER + decoded.value; break;
-        case Segment::TEMP:     targetAddr = 5 + decoded.value; break; 
-        case Segment::STATIC:   targetAddr = STATIC_BASE_ADDR + decoded.value; break;
+        case Segment::CONSTANT: 
+            throw std::runtime_error("Cannot pop into constant segment");
+            
+        case Segment::LOCAL:    pokeLocal(decoded.value, val); break;
+        case Segment::ARG:      pokeArgument(decoded.value, val); break;
+        case Segment::THIS:     pokeThis(decoded.value, val); break;
+        case Segment::THAT:     pokeThat(decoded.value, val); break;
+        case Segment::POINTER:  pokePointer(decoded.value, val); break;
+        case Segment::TEMP:     pokeTemp(decoded.value, val); break; 
+        case Segment::STATIC:   pokeStatic(decoded.value, val); break;
 
         default: throw std::runtime_error("Unknown segment for pop");
     }
-    ram[targetAddr] = val;
 }
 
 void VMEmulator::executeBinaryArithmetic(DecodedInstruction decoded) {
@@ -168,4 +168,8 @@ int16_t VMEmulator::peek(uint16_t addr) const {
 
 int16_t VMEmulator::peekStack() {
     return ram[ram[STACK_POINTER] - 1];
+}
+
+void VMEmulator::poke(uint16_t addr, int16_t value) {
+    ram[addr] = value;
 }
