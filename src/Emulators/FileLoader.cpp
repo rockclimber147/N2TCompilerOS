@@ -1,4 +1,4 @@
-#include "Emulators/HackEmulator/FileLoader.hpp"
+#include "Emulators/FileLoader.hpp"
 
 int16_t FileLoader::convertBinaryStringToSignedInt16(const std::string& binary_string) {
     std::bitset<16> bits(binary_string); 
@@ -61,4 +61,20 @@ std::vector<int16_t> FileLoader::loadFile(const std::string& filepath) {
     } else {
         throw (std::runtime_error("Can only load .hack and .bin files, unknown extension for " + filepath));
     }
+}
+
+std::vector<std::string> FileLoader::loadRawLines(const std::string& filepath) {
+    std::vector<std::string> lines;
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + filepath);
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
+    
+    return lines;
 }

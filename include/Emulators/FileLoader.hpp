@@ -17,6 +17,7 @@ private:
 
 public:
     std::vector<int16_t> loadFile(const std::string& filepath);
+    static std::vector<std::string> loadRawLines(const std::string& filepath);
 };
 
 #endif

@@ -8,11 +8,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(HACK_EMULATOR_SOURCES
-    src/Emulators/HackEmulator/FileLoader.cpp
+    src/Emulators/FileLoader.cpp
     src/Emulators/HackEmulator/HackEmulator.cpp
 )
 
 set(VM_EMULATOR_SOURCES
+    src/Emulators/FileLoader.cpp
     src/Emulators/VMEmulator/VMEmulator.cpp
 )
 
