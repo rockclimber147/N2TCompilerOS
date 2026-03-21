@@ -3,6 +3,7 @@
 
 VMEmulator::VMEmulator() {
     ram.resize(32768, 0);
+    ram[0] = 256;
     initDispatchTables();
     initSegmentMap();
 }

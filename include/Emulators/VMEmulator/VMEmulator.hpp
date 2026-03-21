@@ -66,6 +66,8 @@ public:
     const static uint16_t POINTER_POINTER  = 3;
     const static uint16_t THIS_POINTER     = 3;
     const static uint16_t THAT_POINTER     = 4;
+
+    VMEmulator();
     
     void loadProgram(const std::vector<std::string>& instructions);
     DecodedInstruction decode (std::string instruction);
