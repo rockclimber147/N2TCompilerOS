@@ -3,7 +3,7 @@
 #include <sstream>
 #include <filesystem>
 
-#include "Emulators/HackEmulator/FileLoader.hpp"
+#include "Emulators/FileLoader.hpp"
 #include "Emulators/HackEmulator/HackEmulator.hpp"
 
 TEST_CASE("Hack Emulator runs Project7/MemoryAccess/BasicTest Test Case", "[HackEmulator][BasicTest]") {

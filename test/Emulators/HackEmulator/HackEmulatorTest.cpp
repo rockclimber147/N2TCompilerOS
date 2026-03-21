@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "Emulators/HackEmulator/FileLoader.hpp" // Required for FileLoader (if used in other tests)
+#include "Emulators/FileLoader.hpp" // Required for FileLoader (if used in other tests)
 #include "Emulators/HackEmulator/HackEmulator.hpp" // The class under test
 #include <vector>
 #include <cstdint>

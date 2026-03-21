@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-#include "Emulators/HackEmulator/FileLoader.hpp" 
+#include "Emulators/FileLoader.hpp" 
 
 const std::string TEST_HACK_PATH = "../test/Emulators/HackEmulator/TestFiles/test.hack";
 const std::string TEST_BIN_PATH  = "../test/Emulators/HackEmulator/TestFiles/test.bin";
