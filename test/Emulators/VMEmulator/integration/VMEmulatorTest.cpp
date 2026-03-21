@@ -96,3 +96,42 @@ TEST_CASE("VM Emulator runs Project7/StackArithmetic/StackTest Test Case", "[Hac
     REQUIRE(emu.peek(265) == -91);
     
 }
+
+TEST_CASE("Hack Emulator runs Project8/Program Flow/BasicLoop Test Case", "[HackEmulator][BasicLoop]") {
+    VMEmulator emu;
+    emu.loadProgram("../test/Emulators/HackEmulator/integration/TestCases/Project8/Program Flow/BasicLoop/BasicLoop.hack");
+
+    emu.poke(0, 256);
+    emu.poke(1, 300);
+    emu.poke(2, 400);
+    emu.poke(400, 3);
+
+    for (int i = 0; i < 600; i++) {
+        emu.executeNextInstruction();
+    }
+
+    REQUIRE(emu.peek(0) == 257);
+    REQUIRE(emu.peek(256) == 6);
+}
+
+TEST_CASE("Hack Emulator runs Project8/Program Flow/FibonacciSeries Test Case", "[HackEmulator][FibonacciSeries]") {
+    VMEmulator emu;
+    emu.loadProgram("../test/Emulators/HackEmulator/integration/TestCases/Project8/Program Flow/FibonacciSeries/FibonacciSeries.hack");
+
+    emu.poke(0, 256);
+    emu.poke(1, 300);
+    emu.poke(2, 400);
+    emu.poke(400, 6);
+    emu.poke(401, 3000);
+
+    for (int i = 0; i < 1100; i++) {
+        emu.executeNextInstruction();
+    }
+
+    REQUIRE(emu.peek(3000) == 0);
+    REQUIRE(emu.peek(3001) == 1);
+    REQUIRE(emu.peek(3002) == 1);
+    REQUIRE(emu.peek(3003) == 2);
+    REQUIRE(emu.peek(3004) == 3);
+    REQUIRE(emu.peek(3005) == 5);
+}
