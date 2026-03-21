@@ -7,6 +7,7 @@
 #include <functional>
 #include <unordered_map>
 #include <algorithm>
+#include "VMParser.hpp"
 
 
 enum class InstructionType {
@@ -40,6 +41,7 @@ private:
     std::vector<int16_t> ram;
     std::vector<std::string> rom;
     uint16_t program_counter = 0;
+    VMParser parser;
     std::unordered_map<std::string, std::function<void()>> unaryOps;
     std::unordered_map<std::string, std::function<void()>> binaryOps;
     std::unordered_map<std::string, Segment> segmentMap;
@@ -71,6 +73,8 @@ public:
     VMEmulator();
     
     void loadProgram(const std::vector<std::string>& instructions);
+    void loadProgram(const std::string& path);
+
     DecodedInstruction decode (std::string instruction);
     void executeNextInstruction();
     int16_t peek(uint16_t addr) const;

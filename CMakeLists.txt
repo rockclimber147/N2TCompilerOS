@@ -15,6 +15,7 @@ set(HACK_EMULATOR_SOURCES
 set(VM_EMULATOR_SOURCES
     src/Emulators/FileLoader.cpp
     src/Emulators/VMEmulator/VMEmulator.cpp
+    src/Emulators/VMEmulator/VMParser.cpp
 )
 
 set(TOKENIZER_SOURCES
@@ -294,4 +295,31 @@ target_link_libraries(
 add_test(
     NAME VMEmulator_unit_tests
     COMMAND VMEmulator_unit_tests
+)
+
+# -----------------------------------------------------------------
+# VMEmulator integration tests
+# -----------------------------------------------------------------
+
+add_executable(
+    VMEmulator_integration_tests
+    test/Emulators/VMEmulator/integration/VMEmulatorTest.cpp
+    ${VM_EMULATOR_SOURCES} 
+)
+
+target_include_directories(
+    VMEmulator_integration_tests 
+    PRIVATE 
+    include 
+)
+
+target_link_libraries(
+    VMEmulator_integration_tests 
+    PRIVATE 
+    Catch2::Catch2WithMain
+)
+
+add_test(
+    NAME VMEmulator_integration_tests
+    COMMAND VMEmulator_integration_tests
 )

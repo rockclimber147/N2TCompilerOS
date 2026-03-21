@@ -1,5 +1,8 @@
 #include "Emulators/VMEmulator/VMEmulator.hpp"
+#include "Emulators/VMEmulator/VMParser.hpp"
 #include <sstream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 VMEmulator::VMEmulator() {
     ram.resize(32768, 0);
@@ -12,6 +15,21 @@ void VMEmulator::loadProgram(const std::vector<std::string>& instructions) {
     rom.clear();
     rom = instructions;
     program_counter = 0;
+}
+
+void VMEmulator::loadProgram(const std::string& path) {
+    parser.clear();
+
+    if (fs::is_directory(path)) {
+        for (const auto& entry : fs::directory_iterator(path)) {
+            if (entry.path().extension() == ".vm") {
+                parser.loadFile(entry.path().string());
+            }
+        }
+    } else {
+        parser.loadFile(path);
+    }
+    loadProgram(parser.getInstructions());
 }
 
 void VMEmulator::initDispatchTables() {
