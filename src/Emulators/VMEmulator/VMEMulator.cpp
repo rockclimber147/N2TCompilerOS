@@ -3,6 +3,31 @@
 
 VMEmulator::VMEmulator() {
     ram.resize(32768, 0);
+    initDispatchTables();
+}
+
+void VMEmulator::initDispatchTables() {
+    auto addComp = [this](std::string name, std::function<bool(int16_t, int16_t)> comp) {
+        binaryOps[name] = [this, comp]() {
+            int16_t y = stackPop();
+            int16_t x = stackPop();
+            stackPush(comp(x, y) ? -1 : 0);
+        };
+    };
+
+    addComp("eq", [](int16_t a, int16_t b) { return a == b; });
+    addComp("gt", [](int16_t a, int16_t b) { return a > b; });
+    addComp("lt", [](int16_t a, int16_t b) { return a < b; });
+
+    binaryOps["add"] = [this]() { stackPush(stackPop() + stackPop()); }; 
+    
+    binaryOps["sub"] = [this]() { 
+        int16_t y = stackPop(); 
+        int16_t x = stackPop(); 
+        stackPush(x - y); 
+    };
+
+    unaryOps["neg"] = [this]() { stackPush(-stackPop()); };
 }
 
 void VMEmulator::executeNextInstruction() {
@@ -23,27 +48,53 @@ std::string VMEmulator::fetch() {
 DecodedInstruction VMEmulator::decode(std::string instruction) {
     DecodedInstruction decoded;
     std::stringstream ss(instruction);
-    std::string command;
-    ss >> command;
+    std::string firstWord;
+    ss >> firstWord;
 
-    if (command == "push") {
-        decoded.type = InstructionType::PUSH;
-        // logic to parse segment and value...
-    } else if (command == "pop") {
-        decoded.type = InstructionType::POP;
-        // logic to parse segment and value...
+    if (firstWord == "push" || firstWord == "pop") {
+        decoded.type = (firstWord == "push") ? InstructionType::PUSH : InstructionType::POP;
+        std::string segStr;
+        ss >> segStr >> decoded.value;
+        // logic to map segStr to Segment enum...
     } else {
-        decoded.type = InstructionType::ARITHMETIC;
-        // logic to identify specific op (add, sub, etc.)
+        if (binaryOps.find(firstWord) != binaryOps.end()) {
+            decoded.type = InstructionType::BINARY_ARITHMETIC;
+            decoded.command = firstWord;
+        } else if (unaryOps.find(firstWord) != unaryOps.end()) {
+            decoded.type = InstructionType::UNARY_ARITHMETIC;
+            decoded.command = firstWord;
+        }
     }
-
     return decoded;
 }
 
 void VMEmulator::execute(DecodedInstruction decoded) {
-    // This is the core logic hub
-    // if type == PUSH: handle segments
-    // if type == ARITHMETIC: use stackPop() and stackPush()
+    switch (decoded.type) {
+        case InstructionType::PUSH:              executePush(decoded);             break;
+        case InstructionType::POP:               executePop(decoded);              break;
+        case InstructionType::UNARY_ARITHMETIC:  executeUnaryArithmetic(decoded);  break;
+        case InstructionType::BINARY_ARITHMETIC: executeBinaryArithmetic(decoded); break;
+    }
+}
+
+void VMEmulator::executePush(DecodedInstruction decoded) {
+    // 1. Calculate source address based on segment + value
+    // 2. Read value from RAM
+    // 3. stackPush(val)
+}
+
+void VMEmulator::executePop(DecodedInstruction decoded) {
+    // 1. val = stackPop()
+    // 2. Calculate target address based on segment + value
+    // 3. ram[target] = val
+}
+
+void VMEmulator::executeBinaryArithmetic(DecodedInstruction decoded) {
+    binaryOps[decoded.command]();
+}
+
+void VMEmulator::executeUnaryArithmetic(DecodedInstruction decoded) {
+    unaryOps[decoded.command]();  
 }
 
 void VMEmulator::stackPush(uint16_t val) {

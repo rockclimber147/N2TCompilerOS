@@ -4,14 +4,16 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
+#include <functional>
+#include <unordered_map>
 #include <algorithm>
 
 
 enum class InstructionType {
-    NONE,
     PUSH,
     POP,
-    ARITHMETIC
+    UNARY_ARITHMETIC,
+    BINARY_ARITHMETIC
 };
 
 enum class Segment {
@@ -27,6 +29,7 @@ enum class Segment {
 struct DecodedInstruction {
     InstructionType type;
     Segment segment;
+    std::string command;
     uint16_t value;
 };
 
@@ -36,13 +39,20 @@ private:
     std::vector<int16_t> ram;
     std::vector<std::string> rom;
     uint16_t program_counter = 0;
+    std::unordered_map<std::string, std::function<void()>> unaryOps;
+    std::unordered_map<std::string, std::function<void()>> binaryOps;
 
     std::string fetch();
     DecodedInstruction decode (std::string instruction);
     void execute(DecodedInstruction decoded);
-
+    void executePush(DecodedInstruction decoded);
+    void executePop(DecodedInstruction decoded);
+    void executeUnaryArithmetic(DecodedInstruction decoded);
+    void executeBinaryArithmetic(DecodedInstruction decoded);
     void stackPush(uint16_t val);
     uint16_t stackPop();
+
+    void initDispatchTables();
 
 public:
     const static uint16_t RAM_BASE_ADDR    = 0;
