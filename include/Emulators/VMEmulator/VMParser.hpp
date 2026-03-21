@@ -3,13 +3,21 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <filesystem>
+#include "Emulators/FileLoader.hpp"
 
 class VMParser {
 public:
-    static std::vector<std::string> parse(const std::vector<std::string>& rawLines);
-
+    VMParser() = default;
+    void loadFile(const std::string& filepath);
+    void clear();
+    const std::vector<std::string>& getInstructions() const { return instructions; }
+    std::string cleanLine(const std::string& line);
+    
 private:
-    static std::string cleanLine(const std::string& line);
+    FileLoader loader;
+    std::vector<std::string> instructions;
 };
 
 #endif
