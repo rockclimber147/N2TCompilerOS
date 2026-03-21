@@ -12,7 +12,7 @@ TEST_CASE("VM Stack Arithmetic", "[arithmetic]") {
         
         // Result should be at RAM[256], SP should be 257
         REQUIRE(vm.peek(vm.STACK_POINTER) == 257);
-        REQUIRE(vm.peek(256) == 15);
+        REQUIRE(vm.peekStack() == 15);
     }
 
     SECTION("Comparison Operators") {
@@ -21,11 +21,11 @@ TEST_CASE("VM Stack Arithmetic", "[arithmetic]") {
         vm.executeNextInstruction(); // push 5
         vm.executeNextInstruction(); // eq -> pushes -1 (true)
         
-        REQUIRE(vm.peek(256) == -1); 
+        REQUIRE(vm.peekStack() == -1); 
         
         vm.executeNextInstruction(); // push 10
         vm.executeNextInstruction(); // gt -> is -1 > 10? No.
         
-        REQUIRE(vm.peek(256) == 0); // Result is false
+        REQUIRE(vm.peekStack() == 0); // Result is false
     }
 }

@@ -165,3 +165,7 @@ int16_t VMEmulator::peek(uint16_t addr) const {
     if (addr >= ram.size()) return 0;
     return ram[addr];
 }
+
+int16_t VMEmulator::peekStack() {
+    return ram[ram[STACK_POINTER] - 1];
+}

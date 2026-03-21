@@ -73,6 +73,7 @@ public:
     DecodedInstruction decode (std::string instruction);
     void executeNextInstruction();
     int16_t peek(uint16_t addr) const;
+    int16_t peekStack();
 };
 
 #endif
