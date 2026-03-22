@@ -11,7 +11,7 @@ VMEmulator::VMEmulator() {
     initSegmentMap();
 }
 
-void VMEmulator::loadProgram(const std::vector<std::string>& instructions) {
+void VMEmulator::loadRawProgram(const std::vector<std::string>& instructions) {
     rom.clear();
     rom = instructions;
     program_counter = 0;
@@ -29,7 +29,7 @@ void VMEmulator::loadProgram(const std::string& path) {
     } else {
         parser.loadFile(path, symbolTable);
     }
-    loadProgram(parser.getInstructions());
+    loadRawProgram(parser.getInstructions());
 }
 
 void VMEmulator::initDispatchTables() {
@@ -100,6 +100,12 @@ DecodedInstruction VMEmulator::decode(std::string instruction) {
         } else {
             throw std::runtime_error("Unknown segment: " + segStr);
         }
+    } else if (firstWord == "goto") {
+        decoded.type = InstructionType::GOTO;
+        ss >> decoded.command;
+    } else if (firstWord == "if-goto") {
+        decoded.type = InstructionType::IF_GOTO;
+        ss >> decoded.command;
     } else {
         if (binaryOps.find(firstWord) != binaryOps.end()) {
             decoded.type = InstructionType::BINARY_ARITHMETIC;
@@ -118,6 +124,15 @@ void VMEmulator::execute(DecodedInstruction decoded) {
         case InstructionType::POP:               executePop(decoded);              break;
         case InstructionType::UNARY_ARITHMETIC:  executeUnaryArithmetic(decoded);  break;
         case InstructionType::BINARY_ARITHMETIC: executeBinaryArithmetic(decoded); break;
+        case InstructionType::GOTO:
+            program_counter = symbolTable.getAddressFromLabel(program_counter - 1, decoded.command);
+            break;
+
+        case InstructionType::IF_GOTO:
+            if (stackPop() != 0) {
+                program_counter = symbolTable.getAddressFromLabel(program_counter - 1, decoded.command);
+            }
+            break;
     }
 }
 

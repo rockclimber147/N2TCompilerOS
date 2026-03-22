@@ -15,7 +15,9 @@ enum class InstructionType {
     PUSH,
     POP,
     UNARY_ARITHMETIC,
-    BINARY_ARITHMETIC
+    BINARY_ARITHMETIC,
+    GOTO,
+    IF_GOTO
 };
 
 enum class Segment {
@@ -74,7 +76,7 @@ public:
 
     VMEmulator();
     
-    void loadProgram(const std::vector<std::string>& instructions);
+    void loadRawProgram(const std::vector<std::string>& instructions);
     void loadProgram(const std::string& path);
 
     DecodedInstruction decode (std::string instruction);

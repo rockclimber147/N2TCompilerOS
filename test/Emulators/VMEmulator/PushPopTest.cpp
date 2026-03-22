@@ -8,7 +8,7 @@ TEST_CASE("VM Stack: Pushing Constants", "[stack][constants]") {
     REQUIRE(vm.peek(vm.STACK_POINTER) == 256);
 
     SECTION("Push a single constant") {
-        vm.loadProgram({"push constant 42"});
+        vm.loadRawProgram({"push constant 42"});
         vm.executeNextInstruction();
 
         // 1. The value 42 should be at the old SP (256)
@@ -20,7 +20,7 @@ TEST_CASE("VM Stack: Pushing Constants", "[stack][constants]") {
     }
 
     SECTION("Push multiple constants") {
-        vm.loadProgram({"push constant 10", "push constant 20", "push constant 30"});
+        vm.loadRawProgram({"push constant 10", "push constant 20", "push constant 30"});
         
         vm.executeNextInstruction(); // SP becomes 257
         vm.executeNextInstruction(); // SP becomes 258
@@ -42,7 +42,7 @@ TEST_CASE("VM Segment Access: Base Pointers", "[segments][pointer-based]") {
         vm.poke(vm.LCL_POINTER, 300);
         
         // Test: Pop 999 into local 2 (Internally RAM[302])
-        vm.loadProgram({"push constant 999", "pop local 2"});
+        vm.loadRawProgram({"push constant 999", "pop local 2"});
         vm.executeNextInstruction(); // push 999
         vm.executeNextInstruction(); // pop local 2
         
@@ -52,7 +52,7 @@ TEST_CASE("VM Segment Access: Base Pointers", "[segments][pointer-based]") {
         REQUIRE(vm.peek(302) == 999);
 
         // Test: push from local 2 back to stack
-        vm.loadProgram({"push local 2"});
+        vm.loadRawProgram({"push local 2"});
         vm.executeNextInstruction();
         REQUIRE(vm.peekStack() == 999);
     }
@@ -62,7 +62,7 @@ TEST_CASE("VM Segment Access: Base Pointers", "[segments][pointer-based]") {
         vm.poke(vm.ARG_POINTER, 400);
         vm.pokeArgument(5, 123); // Use helper to setup memory
         
-        vm.loadProgram({"push argument 5"});
+        vm.loadRawProgram({"push argument 5"});
         vm.executeNextInstruction();
         
         REQUIRE(vm.peekStack() == 123);
@@ -73,7 +73,7 @@ TEST_CASE("VM Segment Access: Fixed Mapping", "[segments][fixed]") {
     VMEmulator vm;
 
     SECTION("Temp Segment (RAM 5-12)") {
-        vm.loadProgram({"push constant 55", "pop temp 3"});
+        vm.loadRawProgram({"push constant 55", "pop temp 3"});
         vm.executeNextInstruction();
         vm.executeNextInstruction(); 
         
@@ -83,7 +83,7 @@ TEST_CASE("VM Segment Access: Fixed Mapping", "[segments][fixed]") {
     }
 
     SECTION("Pointer Segment (RAM 3-4)") {
-        vm.loadProgram({"push constant 3000", "pop pointer 0", 
+        vm.loadRawProgram({"push constant 3000", "pop pointer 0", 
                         "push constant 4000", "pop pointer 1"});
         
         // Using a loop for multiple instructions
@@ -95,7 +95,7 @@ TEST_CASE("VM Segment Access: Fixed Mapping", "[segments][fixed]") {
     }
 
     SECTION("Static Segment (RAM 16-255)") {
-        vm.loadProgram({"push constant 88", "pop static 5"});
+        vm.loadRawProgram({"push constant 88", "pop static 5"});
         vm.executeNextInstruction();
         vm.executeNextInstruction(); 
         
