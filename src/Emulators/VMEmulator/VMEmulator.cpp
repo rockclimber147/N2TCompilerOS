@@ -137,6 +137,8 @@ void VMEmulator::execute(DecodedInstruction decoded) {
         case InstructionType::POP:               executePop(decoded);              break;
         case InstructionType::UNARY_ARITHMETIC:  executeUnaryArithmetic(decoded);  break;
         case InstructionType::BINARY_ARITHMETIC: executeBinaryArithmetic(decoded); break;
+        case InstructionType::FUNCTION_CALL:     executeFunctionCall(decoded);     break;
+        case InstructionType::RETURN:            executeReturn(decoded);           break;
         case InstructionType::GOTO:
             program_counter = symbolTable.getAddressFromLabel(program_counter - 1, decoded.command);
             break;
@@ -193,6 +195,39 @@ void VMEmulator::executeBinaryArithmetic(DecodedInstruction decoded) {
 
 void VMEmulator::executeUnaryArithmetic(DecodedInstruction decoded) {
     unaryOps[decoded.command]();  
+}
+
+void VMEmulator::executeFunctionCall(DecodedInstruction decoded) {
+    FunctionEntry entry = symbolTable.getFunctionAddress(decoded.command);
+    stackPush(static_cast<int16_t>(program_counter));
+
+    stackPush(ram[LCL_POINTER]);
+    stackPush(ram[ARG_POINTER]);
+    stackPush(ram[THIS_POINTER]);
+    stackPush(ram[THAT_POINTER]);
+
+    ram[ARG_POINTER] = ram[STACK_POINTER] - 5 - decoded.value;
+    ram[LCL_POINTER] = ram[STACK_POINTER];
+
+    for (int i = 0; i < entry.numLocals; ++i) {
+        stackPush(0);
+    }
+
+    program_counter = entry.address;
+}
+
+void VMEmulator::executeReturn(DecodedInstruction decoded) {
+    int16_t endFrame = ram[LCL_POINTER];
+    int16_t retAddr = ram[endFrame - 5];
+    ram[ram[ARG_POINTER]] = stackPop();
+    ram[STACK_POINTER] = ram[ARG_POINTER] + 1;
+
+    ram[THAT_POINTER] = ram[endFrame - 1];
+    ram[THIS_POINTER] = ram[endFrame - 2];
+    ram[ARG_POINTER]  = ram[endFrame - 3];
+    ram[LCL_POINTER]  = ram[endFrame - 4];
+
+    program_counter = static_cast<uint16_t>(retAddr);
 }
 
 void VMEmulator::stackPush(uint16_t val) {

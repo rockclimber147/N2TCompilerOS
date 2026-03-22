@@ -58,6 +58,8 @@ private:
     void executePop(DecodedInstruction decoded);
     void executeUnaryArithmetic(DecodedInstruction decoded);
     void executeBinaryArithmetic(DecodedInstruction decoded);
+    void executeFunctionCall(DecodedInstruction decoded);
+    void executeReturn(DecodedInstruction decoded);
     void stackPush(uint16_t val);
     uint16_t stackPop();
 
