@@ -5,6 +5,10 @@ void SymbolTable::addLabel(const std::string& fileName, const std::string& label
     labels[fileName][labelName] = address;
 }
 
+void SymbolTable::addFunction(const std::string& functionName, int16_t address, int16_t locals) {
+    functions[functionName] = { address, locals };
+}
+
 void SymbolTable::registerFileRange(const std::string& fileName, int16_t startAddress) {
     fileRanges.push_back({startAddress, fileName});
 }
@@ -35,6 +39,16 @@ int16_t SymbolTable::getAddressFromLabel(int16_t currentPC, const std::string& l
         }
     }
     throw std::runtime_error("Label not found: " + labelName);
+}
+
+FunctionEntry SymbolTable::getFunctionAddress(std::string& functionName) const {
+    auto it = functions.find(functionName);
+    
+    if (it != functions.end()) {
+        return it->second;
+    }
+    
+    throw std::runtime_error("Function not found: " + functionName);
 }
 
 void SymbolTable::clear() {

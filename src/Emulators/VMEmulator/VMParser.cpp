@@ -23,6 +23,15 @@ void VMParser::loadFile(const std::string& filepath, SymbolTable& table) {
 
             table.addLabel(fileName, labelName, static_cast<int16_t>(instructions.size()));
         } 
+        else if (cleaned.rfind("function ", 0) == 0) {
+            std::stringstream ss(cleaned.substr(9));
+            std::string funcName;
+            int16_t locals = 0;
+
+            if (ss >> funcName >> locals) {
+                table.addFunction(funcName, static_cast<int16_t>(instructions.size()), locals);
+            }
+        }
         else {
             instructions.push_back(cleaned);
         }
