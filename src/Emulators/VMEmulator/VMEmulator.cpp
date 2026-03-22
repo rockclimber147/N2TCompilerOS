@@ -23,11 +23,11 @@ void VMEmulator::loadProgram(const std::string& path) {
     if (fs::is_directory(path)) {
         for (const auto& entry : fs::directory_iterator(path)) {
             if (entry.path().extension() == ".vm") {
-                parser.loadFile(entry.path().string());
+                parser.loadFile(entry.path().string(), symbolTable);
             }
         }
     } else {
-        parser.loadFile(path);
+        parser.loadFile(path, symbolTable);
     }
     loadProgram(parser.getInstructions());
 }

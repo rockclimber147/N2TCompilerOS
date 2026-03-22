@@ -16,6 +16,7 @@ set(VM_EMULATOR_SOURCES
     src/Emulators/FileLoader.cpp
     src/Emulators/VMEmulator/VMEmulator.cpp
     src/Emulators/VMEmulator/VMParser.cpp
+    src/Emulators/VMEmulator/SymbolTable.cpp
 )
 
 set(TOKENIZER_SOURCES

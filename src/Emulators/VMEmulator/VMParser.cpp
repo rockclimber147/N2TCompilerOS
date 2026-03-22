@@ -1,12 +1,29 @@
 #include "Emulators/VMEmulator/VMParser.hpp"
 
-void VMParser::loadFile(const std::string& filepath) {
+void VMParser::loadFile(const std::string& filepath, SymbolTable& table) {
+    std::string fileName = std::filesystem::path(filepath).stem().string();
+    table.registerFileRange(fileName, static_cast<int16_t>(instructions.size()));
+
     std::vector<std::string> rawLines = loader.loadRawLines(filepath);
 
     for (const std::string& line : rawLines) {
         std::string cleaned = cleanLine(line);
         
-        if (!cleaned.empty()) {
+        if (cleaned.empty()) {
+            continue;
+        }
+
+        if (cleaned.rfind("label ", 0) == 0) {
+
+            std::string labelName = cleaned.substr(6);
+            size_t last = labelName.find_last_not_of(" \t\n\r");
+            if (last != std::string::npos) {
+                labelName = labelName.substr(0, last + 1);
+            }
+
+            table.addLabel(fileName, labelName, static_cast<int16_t>(instructions.size()));
+        } 
+        else {
             instructions.push_back(cleaned);
         }
     }

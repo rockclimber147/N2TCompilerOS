@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include "VMParser.hpp"
+#include "SymbolTable.hpp"
 
 
 enum class InstructionType {
@@ -42,6 +43,7 @@ private:
     std::vector<std::string> rom;
     uint16_t program_counter = 0;
     VMParser parser;
+    SymbolTable symbolTable;
     std::unordered_map<std::string, std::function<void()>> unaryOps;
     std::unordered_map<std::string, std::function<void()>> binaryOps;
     std::unordered_map<std::string, Segment> segmentMap;
