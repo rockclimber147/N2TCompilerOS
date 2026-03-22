@@ -41,7 +41,7 @@ int16_t SymbolTable::getAddressFromLabel(int16_t currentPC, const std::string& l
     throw std::runtime_error("Label not found: " + labelName);
 }
 
-FunctionEntry SymbolTable::getFunctionAddress(std::string& functionName) const {
+FunctionEntry SymbolTable::getFunctionAddress(const std::string& functionName) const {
     auto it = functions.find(functionName);
     
     if (it != functions.end()) {
@@ -54,4 +54,5 @@ FunctionEntry SymbolTable::getFunctionAddress(std::string& functionName) const {
 void SymbolTable::clear() {
     labels.clear();
     fileRanges.clear();
+    functions.clear();
 }

@@ -17,7 +17,9 @@ enum class InstructionType {
     UNARY_ARITHMETIC,
     BINARY_ARITHMETIC,
     GOTO,
-    IF_GOTO
+    IF_GOTO,
+    FUNCTION_CALL,
+    RETURN
 };
 
 enum class Segment {

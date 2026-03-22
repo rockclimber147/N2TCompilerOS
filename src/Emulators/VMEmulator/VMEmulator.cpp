@@ -106,6 +106,19 @@ DecodedInstruction VMEmulator::decode(std::string instruction) {
     } else if (firstWord == "if-goto") {
         decoded.type = InstructionType::IF_GOTO;
         ss >> decoded.command;
+    } else if (firstWord == "call") {
+        decoded.type = InstructionType::FUNCTION_CALL;
+        std::string funcName;
+        int nArgs;
+        
+        if (ss >> funcName >> nArgs) {
+            decoded.command = funcName;
+            decoded.value = nArgs;
+        } else {
+            throw std::runtime_error("Invalid call command: " + instruction);
+        }
+    } else if (firstWord == "return") {
+        decoded.type = InstructionType::RETURN;
     } else {
         if (binaryOps.find(firstWord) != binaryOps.end()) {
             decoded.type = InstructionType::BINARY_ARITHMETIC;

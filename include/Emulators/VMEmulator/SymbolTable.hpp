@@ -24,7 +24,7 @@ public:
     void registerFileRange(const std::string& fileName, int16_t startAddress);
 
     int16_t getAddressFromLabel(int16_t currentPC, const std::string& labelName) const;
-    FunctionEntry getFunctionAddress(std::string& functionName) const;
+    FunctionEntry getFunctionAddress(const std::string& functionName) const;
     void clear();
 
 private:
