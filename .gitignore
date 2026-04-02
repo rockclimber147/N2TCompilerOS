@@ -16,6 +16,6 @@ build/
 # Test Outputs
 test/HackAssembler/integration/generatedOutput/
 
-__input__/
-__output__/
+__input__/*
+__output__/*
 Projects/
