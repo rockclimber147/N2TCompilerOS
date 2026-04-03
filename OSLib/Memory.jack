@@ -1,0 +1,122 @@
+class Memory {
+    static Array mem;
+    static Array freeList;
+    static Array heapBase, heapEnd;
+
+    function void init() {
+        let mem = 0;                                        // treat all RAM as an array
+        let heapBase = 2048;                                // From the N2T spec
+        let heapEnd = 16384;                                // from N2T spec
+        let freeList = heapBase + 2;
+
+        // Initialize free chunk
+        let freeList[-1] = heapEnd - freeList;              // Chunk size
+        let freeList[-2] = null;                            // Next chunk
+        return;
+    }
+
+    function int peek(int address) {
+        return mem[address];
+    }
+
+    function void poke(int address, int value) {
+        let mem[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {
+        var Array current_pointer;
+        var Array last_pointer;
+        
+        if (size < 1) {
+            do Sys.error(5); // memory size must be greater than 0
+        }
+
+        let last_pointer = null;
+        let current_pointer = freeList;
+        
+        if (current_pointer = null) {
+            do Sys.error(6);  // heap overflow
+        }
+
+        while (current_pointer[-1] < (size + 1)) {
+            let last_pointer = current_pointer;
+            let current_pointer = current_pointer[-2];
+            if (current_pointer = null) {
+                do Sys.error(6); // heap overflow
+            }
+        }
+
+        // current_pointer holds a free memory which the requested block fits in
+        if (current_pointer[-1] > (size + 2)) {
+            // Allocate chunk is big, we can split into two pieces
+            let current_pointer[size] = current_pointer[-2];
+            let current_pointer[size + 1] = current_pointer[-1] - (size + 2);
+            let current_pointer[-1] = size;
+
+            if (last_pointer = null) {
+                //only if current pointer is the first cell
+                let freeList = (current_pointer + size) + 2;
+            }
+            else {
+                let last_pointer[-2] = (current_pointer + size) + 2;
+            }
+        }
+        else {
+            if (last_pointer = null) {
+                let freeList = current_pointer[-2];
+            }
+            else {
+                let last_pointer[-2] = current_pointer[-2];
+            }
+        }
+
+        return current_pointer;
+    }
+
+    function void deAlloc(Array o) {
+        var Array prev, curr;
+
+        let prev = null;
+        let curr = freeList;
+
+        while (~(curr = null) & (curr < o)) {
+            let prev = curr;
+            let curr = curr[-2]; // Move to next in linked list
+        }
+        if (prev = null) {
+            let o[-2] = freeList;
+            let freeList = o;
+        } else {
+            let o[-2] = curr;
+            let prev[-2] = o;
+        }
+
+        do Memory.mergeFreeList(prev, o);
+        return;
+    }
+
+    function void mergeFreeList(Array prev, Array o) {
+        var Array next;
+        let next = o[-2];
+
+        // Check if 'o' can merge with 'next' (the block after it)
+        if (~(next = null)) {
+            if ((o + o[-1]) = (next - 2)) {
+                let o[-1] = o[-1] + next[-1] + 2; // Add size + header
+                let o[-2] = next[-2];            // Link past 'next'
+            }
+        }
+
+        // Check if 'prev' can merge with 'o' (the block before it)
+        if (~(prev = null)) {
+            if ((prev + prev[-1]) = (o - 2)) {
+                let prev[-1] = prev[-1] + o[-1] + 2;
+                let prev[-2] = o[-2];            // Link past 'o'
+            }
+        }
+        return;
+    }
+}
