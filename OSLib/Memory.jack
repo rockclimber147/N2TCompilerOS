@@ -10,8 +10,8 @@ class Memory {
         let freeList = heapBase + 2;
 
         // Initialize free chunk
-        let freeList[-1] = heapEnd - freeList;              // Chunk size
-        let freeList[-2] = null;                            // Next chunk
+        let freeList[-1] = heapEnd - freeList;              // Initial free list is single large chunk the size of the heap
+        let freeList[-2] = null;                            // pointer to the start of the next chunk
         return;
     }
 
@@ -24,8 +24,6 @@ class Memory {
         return;
     }
 
-    /** Finds an available RAM block of the given size and returns
-     *  a reference to its base address. */
     function int alloc(int size) {
         var Array current_pointer;
         var Array last_pointer;
@@ -41,6 +39,7 @@ class Memory {
             do Sys.error(6);  // heap overflow
         }
 
+        // find the next free chunk that can fit the desired size
         while (current_pointer[-1] < (size + 1)) {
             let last_pointer = current_pointer;
             let current_pointer = current_pointer[-2];
