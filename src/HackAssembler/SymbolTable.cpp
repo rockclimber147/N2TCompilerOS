@@ -49,5 +49,5 @@ void SymbolTable::addJumpLabel(const std::string& label, int address) {
 
 void SymbolTable::addVariable(const std::string& label) {
     symbolTable_.emplace(label, nextVariableAddress_);
-    nextVariableAddress_++; 
+    nextVariableAddress_++;
 }

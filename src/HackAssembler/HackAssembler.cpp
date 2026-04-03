@@ -175,10 +175,6 @@ std::string HackAssembler::centerSpaces(const std::string& s) {
 }
 
 std::string HackAssembler::getBinaryRepresentation(int n) {
-    if (n < 0 || n > 32767) { 
-        throw std::out_of_range("Address value " + std::to_string(n) + 
-                                " is out of the 15-bit range (0-32767).");
-    }
     std::string binaryRep = std::bitset<16>(n).to_string();
 
     return binaryRep;
